@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NewsPulse — Login & Register</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>NewsPulse — Login & Register with OTP</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -17,6 +15,7 @@
       --border: rgba(0,0,0,0.08);
       --primary: #3b82f6;
       --error: #ef4444;
+      --success: #10b981;
     }
     
     @media (prefers-color-scheme: dark) {
@@ -91,10 +90,6 @@
     .tab-btn.active {
       color: var(--primary);
       border-bottom-color: var(--primary);
-    }
-    
-    .tab-btn:hover {
-      color: var(--text);
     }
     
     .form-group {
@@ -218,6 +213,23 @@
       text-align: center;
       line-height: 1.5;
     }
+    
+    .otp-input {
+      letter-spacing: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .step-info {
+      background: var(--bg2);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-sec);
+      margin-bottom: 16px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -238,58 +250,107 @@
   <div id="errorMsg" class="error-msg"></div>
   <div id="successMsg" class="success-msg"></div>
 
-  <!-- REGISTER FORM -->
+  <!-- ═══ REGISTER FLOW ═══ -->
   <div class="form-content active" id="registerForm">
-    <div class="trial-info">
-      💡 <strong>Free trial 5 hari</strong> — akses penuh semua kategori berita. Tanpa kartu kredit diperlukan.
+    <!-- Step 1: Register Form -->
+    <div id="registerStep1">
+      <div class="trial-info">
+        💡 <strong>Free trial 5 hari</strong> — akses penuh semua kategori berita. Tanpa kartu kredit diperlukan.
+      </div>
+
+      <div class="form-group">
+        <label for="regName">Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Nama Anda" required>
+      </div>
+
+      <div class="form-group">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="email@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
+      </div>
+
+      <button type="button" class="btn btn-primary" id="regStep1Btn" onclick="registerStep1()">
+        <span id="regStep1BtnText">Lanjutkan</span>
+        <span id="regStep1Spinner" class="spinner" style="display:none;"></span>
+      </button>
     </div>
 
-    <div class="form-group">
-      <label for="regName">Nama Lengkap</label>
-      <input type="text" id="regName" placeholder="Nama Anda" required>
-    </div>
+    <!-- Step 2: OTP Verification -->
+    <div id="registerStep2" style="display:none;">
+      <div class="step-info">
+        📧 OTP telah dikirim ke email Anda. Silakan check inbox dan masukkan kode 6 digit.
+      </div>
 
-    <div class="form-group">
-      <label for="regEmail">Email</label>
-      <input type="email" id="regEmail" placeholder="email@example.com" required>
-    </div>
+      <div class="form-group">
+        <label for="regOTP">Kode OTP</label>
+        <input type="text" id="regOTP" class="otp-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required>
+      </div>
 
-    <div class="form-group">
-      <label for="regPassword">Password</label>
-      <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
-    </div>
+      <button type="button" class="btn btn-primary" id="regStep2Btn" onclick="registerStep2()">
+        <span id="regStep2BtnText">Verifikasi & Daftar</span>
+        <span id="regStep2Spinner" class="spinner" style="display:none;"></span>
+      </button>
 
-    <button type="button" class="btn btn-primary" id="regBtn" onclick="handleRegister()">
-      <span id="regBtnText">Daftar Sekarang</span>
-      <span id="regSpinner" class="spinner" style="display:none;"></span>
-    </button>
+      <button type="button" class="btn" style="background:var(--text-sec);color:white;margin-top:8px;" onclick="registerStep1Back()">
+        ← Kembali
+      </button>
+    </div>
   </div>
 
-  <!-- LOGIN FORM -->
+  <!-- ═══ LOGIN FLOW ═══ -->
   <div class="form-content" id="loginForm">
-    <div class="form-group">
-      <label for="loginEmail">Email</label>
-      <input type="email" id="loginEmail" placeholder="email@example.com" required>
+    <!-- Step 1: Login Credentials -->
+    <div id="loginStep1">
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="email@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Password Anda" required>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="loginStep1Btn" onclick="loginStep1()">
+        <span id="loginStep1BtnText">Lanjutkan</span>
+        <span id="loginStep1Spinner" class="spinner" style="display:none;"></span>
+      </button>
     </div>
 
-    <div class="form-group">
-      <label for="loginPassword">Password</label>
-      <input type="password" id="loginPassword" placeholder="Password Anda" required>
-    </div>
+    <!-- Step 2: OTP Verification -->
+    <div id="loginStep2" style="display:none;">
+      <div class="step-info">
+        📧 OTP telah dikirim ke email Anda. Silakan check inbox dan masukkan kode 6 digit.
+      </div>
 
-    <button type="button" class="btn btn-primary" id="loginBtn" onclick="handleLogin()">
-      <span id="loginBtnText">Masuk</span>
-      <span id="loginSpinner" class="spinner" style="display:none;"></span>
-    </button>
+      <div class="form-group">
+        <label for="loginOTP">Kode OTP</label>
+        <input type="text" id="loginOTP" class="otp-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="loginStep2Btn" onclick="loginStep2()">
+        <span id="loginStep2BtnText">Verifikasi & Masuk</span>
+        <span id="loginStep2Spinner" class="spinner" style="display:none;"></span>
+      </button>
+
+      <button type="button" class="btn" style="background:var(--text-sec);color:white;margin-top:8px;" onclick="loginStep1Back()">
+        ← Kembali
+      </button>
+    </div>
   </div>
 
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────────────
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 
-// ── HELPER: Show/Hide Messages ─────────────────────────────────────────
+let registerEmail = '';
+let loginEmail = '';
+
 function showError(message) {
   const errorMsg = document.getElementById('errorMsg');
   errorMsg.textContent = '❌ ' + message;
@@ -304,7 +365,6 @@ function showSuccess(message) {
   setTimeout(() => successMsg.classList.remove('show'), 3000);
 }
 
-// ── SWITCH TAB ───────────────────────────────────────────────────────────
 function switchTab(tab) {
   const tabs = document.querySelectorAll('.tab-btn');
   const forms = document.querySelectorAll('.form-content');
@@ -315,31 +375,40 @@ function switchTab(tab) {
   if (tab === 'register') {
     tabs[0].classList.add('active');
     document.getElementById('registerForm').classList.add('active');
+    registerStep1Back(); // Reset
   } else {
     tabs[1].classList.add('active');
     document.getElementById('loginForm').classList.add('active');
+    loginStep1Back(); // Reset
   }
   
   document.getElementById('errorMsg').classList.remove('show');
   document.getElementById('successMsg').classList.remove('show');
 }
 
-// ── HANDLE REGISTER ──────────────────────────────────────────────────────
-async function handleRegister() {
+// ═══ REGISTER FLOW ═══
+async function registerStep1() {
   const name = document.getElementById('regName').value;
   const email = document.getElementById('regEmail').value;
   const password = document.getElementById('regPassword').value;
   
-  const regBtn = document.getElementById('regBtn');
-  const regBtnText = document.getElementById('regBtnText');
-  const regSpinner = document.getElementById('regSpinner');
+  if (!name || !email || !password) {
+    showError('Semua field harus diisi');
+    return;
+  }
   
-  regBtn.disabled = true;
-  regBtnText.style.display = 'none';
-  regSpinner.style.display = 'inline-block';
+  registerEmail = email;
+  
+  const btn = document.getElementById('regStep1Btn');
+  const btnText = document.getElementById('regStep1BtnText');
+  const spinner = document.getElementById('regStep1Spinner');
+  
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'inline-block';
   
   try {
-    const res = await fetch(`${API_URL}/api/auth/register`, {
+    const res = await fetch(`${API_URL}/api/auth/register-request`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password })
@@ -348,14 +417,59 @@ async function handleRegister() {
     const data = await res.json();
     
     if (!data.ok) {
-      showError(data.error || 'Registration failed');
+      showError(data.error || 'Gagal mengirim OTP');
+      return;
+    }
+    
+    showSuccess('OTP telah dikirim ke email Anda!');
+    
+    // Show OTP step
+    document.getElementById('registerStep1').style.display = 'none';
+    document.getElementById('registerStep2').style.display = 'block';
+    
+  } catch (error) {
+    showError('Network error: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = 'inline';
+    spinner.style.display = 'none';
+  }
+}
+
+async function registerStep2() {
+  const otp = document.getElementById('regOTP').value;
+  
+  if (!otp || otp.length !== 6) {
+    showError('Masukkan OTP 6 digit');
+    return;
+  }
+  
+  const btn = document.getElementById('regStep2Btn');
+  const btnText = document.getElementById('regStep2BtnText');
+  const spinner = document.getElementById('regStep2Spinner');
+  
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'inline-block';
+  
+  try {
+    const res = await fetch(`${API_URL}/api/auth/register-verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: registerEmail, otp })
+    });
+    
+    const data = await res.json();
+    
+    if (!data.ok) {
+      showError(data.error || 'OTP tidak valid');
       return;
     }
     
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     
-    showSuccess('Registrasi berhasil! Redirect ke halaman berita...');
+    showSuccess('Registrasi berhasil! Redirect...');
     setTimeout(() => {
       window.location.href = 'index.html';
     }, 2000);
@@ -363,27 +477,40 @@ async function handleRegister() {
   } catch (error) {
     showError('Network error: ' + error.message);
   } finally {
-    regBtn.disabled = false;
-    regBtnText.style.display = 'inline';
-    regSpinner.style.display = 'none';
+    btn.disabled = false;
+    btnText.style.display = 'inline';
+    spinner.style.display = 'none';
   }
 }
 
-// ── HANDLE LOGIN ──────────────────────────────────────────────────────
-async function handleLogin() {
+function registerStep1Back() {
+  document.getElementById('registerStep1').style.display = 'block';
+  document.getElementById('registerStep2').style.display = 'none';
+  document.getElementById('regOTP').value = '';
+}
+
+// ═══ LOGIN FLOW ═══
+async function loginStep1() {
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
   
-  const loginBtn = document.getElementById('loginBtn');
-  const loginBtnText = document.getElementById('loginBtnText');
-  const loginSpinner = document.getElementById('loginSpinner');
+  if (!email || !password) {
+    showError('Email dan password harus diisi');
+    return;
+  }
   
-  loginBtn.disabled = true;
-  loginBtnText.style.display = 'none';
-  loginSpinner.style.display = 'inline-block';
+  loginEmail = email;
+  
+  const btn = document.getElementById('loginStep1Btn');
+  const btnText = document.getElementById('loginStep1BtnText');
+  const spinner = document.getElementById('loginStep1Spinner');
+  
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'inline-block';
   
   try {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
+    const res = await fetch(`${API_URL}/api/auth/login-request`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -392,14 +519,59 @@ async function handleLogin() {
     const data = await res.json();
     
     if (!data.ok) {
-      showError(data.error || 'Login failed');
+      showError(data.error || 'Email atau password salah');
+      return;
+    }
+    
+    showSuccess('OTP telah dikirim ke email Anda!');
+    
+    // Show OTP step
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+    
+  } catch (error) {
+    showError('Network error: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = 'inline';
+    spinner.style.display = 'none';
+  }
+}
+
+async function loginStep2() {
+  const otp = document.getElementById('loginOTP').value;
+  
+  if (!otp || otp.length !== 6) {
+    showError('Masukkan OTP 6 digit');
+    return;
+  }
+  
+  const btn = document.getElementById('loginStep2Btn');
+  const btnText = document.getElementById('loginStep2BtnText');
+  const spinner = document.getElementById('loginStep2Spinner');
+  
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'inline-block';
+  
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login-verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: loginEmail, otp })
+    });
+    
+    const data = await res.json();
+    
+    if (!data.ok) {
+      showError(data.error || 'OTP tidak valid');
       return;
     }
     
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     
-    showSuccess('Login berhasil! Redirect ke halaman berita...');
+    showSuccess('Login berhasil! Redirect...');
     setTimeout(() => {
       window.location.href = 'index.html';
     }, 1500);
@@ -407,13 +579,19 @@ async function handleLogin() {
   } catch (error) {
     showError('Network error: ' + error.message);
   } finally {
-    loginBtn.disabled = false;
-    loginBtnText.style.display = 'inline';
-    loginSpinner.style.display = 'none';
+    btn.disabled = false;
+    btnText.style.display = 'inline';
+    spinner.style.display = 'none';
   }
 }
 
-// ── AUTO-REDIRECT: Jika sudah login ──────────────────────────────────
+function loginStep1Back() {
+  document.getElementById('loginStep1').style.display = 'block';
+  document.getElementById('loginStep2').style.display = 'none';
+  document.getElementById('loginOTP').value = '';
+}
+
+// Auto-redirect if already logged in
 if (localStorage.getItem('token')) {
   window.location.href = 'index.html';
 }
