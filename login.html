@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NewsPulse — Login</title>
+  <title>NewsPulse — Login & Register</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -16,7 +16,6 @@
       --text-sec: #6b7280;
       --border: rgba(0,0,0,0.08);
       --primary: #3b82f6;
-      --success: #10b981;
       --error: #ef4444;
     }
     
@@ -41,7 +40,7 @@
       padding: 20px;
     }
     
-    .login-container {
+    .container {
       width: 100%;
       max-width: 420px;
       background: var(--bg);
@@ -66,6 +65,36 @@
     .logo-sub {
       font-size: 13px;
       color: var(--text-sec);
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      background: none;
+      border: none;
+      color: var(--text-sec);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    
+    .tab-btn:hover {
+      color: var(--text);
     }
     
     .form-group {
@@ -123,17 +152,6 @@
       opacity: 0.9;
     }
     
-    .btn-secondary {
-      background: transparent;
-      color: var(--text-sec);
-      border: 1px solid var(--border);
-    }
-    
-    .btn-secondary:hover {
-      background: var(--bg2);
-      color: var(--text);
-    }
-    
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -150,26 +168,6 @@
     }
     
     @keyframes spin { to { transform: rotate(360deg); } }
-    
-    .toggle-auth {
-      text-align: center;
-      margin-top: 16px;
-      font-size: 13px;
-      color: var(--text-sec);
-    }
-    
-    .toggle-auth button {
-      background: none;
-      border: none;
-      color: var(--primary);
-      cursor: pointer;
-      font-weight: 500;
-      padding: 0;
-    }
-    
-    .toggle-auth button:hover {
-      text-decoration: underline;
-    }
     
     .error-msg {
       background: #fee2e2;
@@ -201,11 +199,11 @@
       display: block;
     }
     
-    .auth-form {
+    .form-content {
       display: none;
     }
     
-    .auth-form.active {
+    .form-content.active {
       display: block;
     }
     
@@ -224,24 +222,28 @@
 </head>
 <body>
 
-<div class="login-container">
+<div class="container">
   
   <div class="logo">
     <div class="logo-text">NewsPulse</div>
     <div class="logo-sub">Multi-Category News Dashboard</div>
   </div>
 
-  <div class="trial-info">
-    💡 <strong>Free trial 5 hari</strong> — akses penuh semua kategori berita. Tanpa kartu kredit diperlukan.
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('register')">Daftar</button>
+    <button class="tab-btn" onclick="switchTab('login')">Masuk</button>
   </div>
 
   <div id="errorMsg" class="error-msg"></div>
   <div id="successMsg" class="success-msg"></div>
 
   <!-- REGISTER FORM -->
-  <form class="auth-form active" id="registerForm" onsubmit="handleRegister(event)">
-    <h2 style="font-size:18px;margin-bottom:20px;color:var(--text);">Buat Akun</h2>
-    
+  <div class="form-content active" id="registerForm">
+    <div class="trial-info">
+      💡 <strong>Free trial 5 hari</strong> — akses penuh semua kategori berita. Tanpa kartu kredit diperlukan.
+    </div>
+
     <div class="form-group">
       <label for="regName">Nama Lengkap</label>
       <input type="text" id="regName" placeholder="Nama Anda" required>
@@ -257,16 +259,14 @@
       <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
     </div>
 
-    <button type="submit" class="btn btn-primary" id="regBtn">
+    <button type="button" class="btn btn-primary" id="regBtn" onclick="handleRegister()">
       <span id="regBtnText">Daftar Sekarang</span>
       <span id="regSpinner" class="spinner" style="display:none;"></span>
     </button>
-  </form>
+  </div>
 
   <!-- LOGIN FORM -->
-  <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
-    <h2 style="font-size:18px;margin-bottom:20px;color:var(--text);">Masuk</h2>
-    
+  <div class="form-content" id="loginForm">
     <div class="form-group">
       <label for="loginEmail">Email</label>
       <input type="email" id="loginEmail" placeholder="email@example.com" required>
@@ -277,27 +277,19 @@
       <input type="password" id="loginPassword" placeholder="Password Anda" required>
     </div>
 
-    <button type="submit" class="btn btn-primary" id="loginBtn">
+    <button type="button" class="btn btn-primary" id="loginBtn" onclick="handleLogin()">
       <span id="loginBtnText">Masuk</span>
       <span id="loginSpinner" class="spinner" style="display:none;"></span>
     </button>
-  </form>
-
-  <div class="toggle-auth">
-    <span id="toggleText">Belum punya akun? <button type="button" onclick="toggleAuth()">Daftar di sini</button></span>
   </div>
 
 </div>
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────
-// Ganti ke URL backend lo (localhost lokal, atau Render URL untuk production)
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 
-// ── STATE ───────────────────────────────────────────────────────────────
-let isRegisterMode = true;
-
-// ── HELPER: Show/Hide Error ─────────────────────────────────────────────
+// ── HELPER: Show/Hide Messages ─────────────────────────────────────────
 function showError(message) {
   const errorMsg = document.getElementById('errorMsg');
   errorMsg.textContent = '❌ ' + message;
@@ -312,33 +304,28 @@ function showSuccess(message) {
   setTimeout(() => successMsg.classList.remove('show'), 3000);
 }
 
-// ── TOGGLE: Switch Register ↔ Login ─────────────────────────────────────
-function toggleAuth() {
-  isRegisterMode = !isRegisterMode;
+// ── SWITCH TAB ───────────────────────────────────────────────────────────
+function switchTab(tab) {
+  const tabs = document.querySelectorAll('.tab-btn');
+  const forms = document.querySelectorAll('.form-content');
   
-  const registerForm = document.getElementById('registerForm');
-  const loginForm = document.getElementById('loginForm');
-  const toggleText = document.getElementById('toggleText');
+  tabs.forEach(t => t.classList.remove('active'));
+  forms.forEach(f => f.classList.remove('active'));
   
-  if (isRegisterMode) {
-    registerForm.classList.add('active');
-    loginForm.classList.remove('active');
-    toggleText.innerHTML = 'Sudah punya akun? <button type="button" onclick="toggleAuth()">Masuk di sini</button>';
+  if (tab === 'register') {
+    tabs[0].classList.add('active');
+    document.getElementById('registerForm').classList.add('active');
   } else {
-    registerForm.classList.remove('active');
-    loginForm.classList.add('active');
-    toggleText.innerHTML = 'Belum punya akun? <button type="button" onclick="toggleAuth()">Daftar di sini</button>';
+    tabs[1].classList.add('active');
+    document.getElementById('loginForm').classList.add('active');
   }
   
-  // Clear error messages
   document.getElementById('errorMsg').classList.remove('show');
   document.getElementById('successMsg').classList.remove('show');
 }
 
-// ── HANDLE: Register ────────────────────────────────────────────────────
-async function handleRegister(event) {
-  event.preventDefault();
-  
+// ── HANDLE REGISTER ──────────────────────────────────────────────────────
+async function handleRegister() {
   const name = document.getElementById('regName').value;
   const email = document.getElementById('regEmail').value;
   const password = document.getElementById('regPassword').value;
@@ -365,7 +352,6 @@ async function handleRegister(event) {
       return;
     }
     
-    // Simpan token ke localStorage
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     
@@ -383,10 +369,8 @@ async function handleRegister(event) {
   }
 }
 
-// ── HANDLE: Login ───────────────────────────────────────────────────────
-async function handleLogin(event) {
-  event.preventDefault();
-  
+// ── HANDLE LOGIN ──────────────────────────────────────────────────────
+async function handleLogin() {
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
   
@@ -412,7 +396,6 @@ async function handleLogin(event) {
       return;
     }
     
-    // Simpan token & user info
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     
@@ -430,7 +413,7 @@ async function handleLogin(event) {
   }
 }
 
-// ── AUTO-REDIRECT: Jika sudah login, langsung ke index.html ──────────────
+// ── AUTO-REDIRECT: Jika sudah login ──────────────────────────────────
 if (localStorage.getItem('token')) {
   window.location.href = 'index.html';
 }
