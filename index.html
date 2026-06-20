@@ -54,14 +54,6 @@
       padding: 8px 12px;
       transition: all 0.15s;
     }
-    .btn-translate {
-      background: var(--bg2);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-translate:hover {
-      background: var(--border);
-    }
     .btn-admin {
       background: var(--primary);
       color: white;
@@ -98,7 +90,6 @@
       cursor: pointer;
       font-size: 13px;
       font-weight: 500;
-      transition: all 0.15s;
     }
     .category-btn:hover {
       border-color: var(--primary);
@@ -106,7 +97,6 @@
     .category-btn.active {
       background: var(--primary);
       color: white;
-      border-color: var(--primary);
     }
     .search-box {
       flex: 1;
@@ -125,9 +115,6 @@
     .btn-refresh {
       background: var(--primary);
       color: white;
-    }
-    .btn-refresh:hover {
-      opacity: 0.9;
     }
     .stats {
       background: var(--bg);
@@ -159,15 +146,31 @@
       font-weight: 600;
       margin-bottom: 8px;
     }
+    .news-section {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .news-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .news-lang {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
     .news-title {
       font-size: 16px;
       font-weight: 600;
       margin-bottom: 8px;
       line-height: 1.4;
     }
-    .news-title.translated {
+    .news-title-id {
       color: var(--accent);
-      font-style: italic;
     }
     .news-desc {
       font-size: 13px;
@@ -186,9 +189,6 @@
       color: var(--primary);
       text-decoration: none;
       font-weight: 500;
-    }
-    .news-link:hover {
-      text-decoration: underline;
     }
     .loading {
       text-align: center;
@@ -226,6 +226,10 @@
       padding: 60px 20px;
       color: var(--text-sec);
     }
+    .translating {
+      font-style: italic;
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
@@ -240,13 +244,8 @@
       <div class="user-status" id="userStatus">Loading...</div>
     </div>
     
-    <!-- TRANSLATE BUTTON - GUARANTEED HERE -->
-    <button class="btn-translate" id="translateBtn" onclick="toggleTranslate()">🌐 English</button>
-    
-    <!-- ADMIN BUTTON -->
     <button class="btn-admin" id="adminBtn" style="display:none;" onclick="goAdmin()">👨‍💼 Admin</button>
     
-    <!-- LOGOUT BUTTON -->
     <button class="btn-logout" onclick="logout()">Logout</button>
   </div>
 </div>
@@ -254,7 +253,7 @@
 <!-- MAIN -->
 <div class="container">
   <div class="title">📰 Financial & Tech News</div>
-  <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
+  <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech (English & Indonesian)</div>
   
   <!-- CONTROLS -->
   <div class="controls">
@@ -279,7 +278,6 @@
 <script>
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 let allNews = [];
-let isTranslated = false;
 let currentCategory = 'all';
 
 async function init() {
@@ -309,9 +307,7 @@ async function loadNews() {
     document.getElementById('newsList').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
     
     const token = localStorage.getItem('token');
-    const url = isTranslated ? `${API_URL}/api/news?translate=id` : `${API_URL}/api/news`;
-    
-    const res = await fetch(url, {
+    const res = await fetch(`${API_URL}/api/news`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
@@ -321,10 +317,49 @@ async function loadNews() {
       return;
     }
     
-    allNews = data.news || [];
+    // DEDUPLICATE by title
+    const seen = new Set();
+    allNews = (data.news || []).filter(item => {
+      if (seen.has(item.title)) return false;
+      seen.add(item.title);
+      return true;
+    });
+    
+    // AUTO-TRANSLATE all news
+    await translateAllNews();
+    
     filterNews();
   } catch (error) {
     document.getElementById('newsList').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
+  }
+}
+
+async function translateAllNews() {
+  for (let i = 0; i < allNews.length; i++) {
+    if (!allNews[i].title_id) {
+      allNews[i].title_id = await translateText(allNews[i].title);
+    }
+    if (!allNews[i].description_id) {
+      allNews[i].description_id = await translateText(allNews[i].description);
+    }
+  }
+}
+
+async function translateText(text) {
+  try {
+    const res = await fetch('https://libretranslate.de/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        q: text,
+        source: 'en',
+        target: 'id',
+      }),
+    });
+    const data = await res.json();
+    return data.translatedText || text;
+  } catch (error) {
+    return text;
   }
 }
 
@@ -345,7 +380,8 @@ function filterNews() {
   
   if (search) {
     filtered = filtered.filter(n => 
-      (isTranslated ? (n.title_id || n.title) : n.title).toLowerCase().includes(search)
+      n.title.toLowerCase().includes(search) || 
+      (n.title_id && n.title_id.toLowerCase().includes(search))
     );
   }
   
@@ -360,28 +396,33 @@ function renderNews(news) {
     return;
   }
   
-  container.innerHTML = news.map(item => `
+  container.innerHTML = news.map((item, idx) => `
     <div class="news-item">
       <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
-      <div class="news-title ${isTranslated ? 'translated' : ''}">
-        ${isTranslated ? (item.title_id || item.title) : item.title}
+      
+      <!-- ENGLISH VERSION -->
+      <div class="news-section">
+        <div class="news-lang">🇬🇧 English</div>
+        <div class="news-title">${item.title}</div>
+        <div class="news-desc">${item.description}</div>
+        <div class="news-footer">
+          <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
+          <a href="${item.link}" target="_blank" class="news-link">Read more →</a>
+        </div>
       </div>
-      <div class="news-desc">
-        ${isTranslated ? (item.description_id || item.description) : item.description}
-      </div>
-      <div class="news-footer">
-        <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
-        <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
+      
+      <!-- INDONESIAN VERSION -->
+      <div class="news-section">
+        <div class="news-lang">🇮🇩 Bahasa Indonesia</div>
+        <div class="news-title news-title-id">${item.title_id || item.title}</div>
+        <div class="news-desc">${item.description_id || item.description}</div>
+        <div class="news-footer">
+          <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
+          <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
+        </div>
       </div>
     </div>
   `).join('');
-}
-
-function toggleTranslate() {
-  isTranslated = !isTranslated;
-  const btn = document.getElementById('translateBtn');
-  btn.textContent = isTranslated ? '🌐 Indonesian' : '🌐 English';
-  loadNews();
 }
 
 function refreshNews() {
