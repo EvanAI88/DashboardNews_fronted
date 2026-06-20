@@ -345,22 +345,37 @@ async function translateAllNews() {
   }
 }
 
-async function translateText(text) {
-  try {
-    const res = await fetch('https://libretranslate.de/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        q: text,
-        source: 'en',
-        target: 'id',
-      }),
-    });
-    const data = await res.json();
-    return data.translatedText || text;
-  } catch (error) {
-    return text;
+async function translateText(text, retries = 3) {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const res = await fetch('https://libretranslate.de/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          q: text,
+          source: 'en',
+          target: 'id',
+        }),
+        timeout: 8000,
+      });
+      
+      if (!res.ok) {
+        console.warn(`Translation attempt ${attempt + 1} failed with status ${res.status}`);
+        continue;
+      }
+      
+      const data = await res.json();
+      if (data.translatedText && data.translatedText.trim() !== '' && data.translatedText !== text) {
+        return data.translatedText;
+      }
+    } catch (error) {
+      console.warn(`Translation attempt ${attempt + 1} error:`, error.message);
+      if (attempt < retries - 1) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+      }
+    }
   }
+  return text; // Fallback to original
 }
 
 function filterCategory(cat) {
