@@ -14,7 +14,7 @@
       --text-sec: #6b7280;
       --border: rgba(0,0,0,0.08);
       --primary: #3b82f6;
-      --danger: #ef4444;
+      --accent: #10b981;
     }
     
     @media (prefers-color-scheme: dark) {
@@ -28,9 +28,11 @@
     }
     
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg2);
       color: var(--text);
+      margin: 0;
+      padding: 0;
     }
     
     .header {
@@ -40,50 +42,41 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-left {
+      display: flex;
+      gap: 16px;
+      align-items: center;
     }
     
     .logo {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
-      color: var(--text);
-    }
-    
-    .logo-sub {
-      font-size: 12px;
-      color: var(--text-sec);
-      font-weight: 400;
     }
     
     .header-right {
       display: flex;
+      gap: 12px;
       align-items: center;
-      gap: 16px;
     }
     
     .user-info {
+      font-size: 13px;
       text-align: right;
     }
     
     .user-name {
-      font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text);
     }
     
     .user-status {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-sec);
-      margin-top: 2px;
-    }
-    
-    .user-status.admin {
-      color: #059669;
-      font-weight: 500;
-    }
-    
-    .user-status.trial {
-      color: #dc2626;
-      font-weight: 500;
     }
     
     button {
@@ -91,162 +84,142 @@
       border: none;
       cursor: pointer;
       border-radius: 6px;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 8px 14px;
+      font-size: 13px;
+      padding: 8px 12px;
       transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     
-    .btn-logout {
-      background: var(--danger);
-      color: white;
-    }
-    
-    .btn-logout:hover {
-      opacity: 0.9;
-    }
-    
-    .btn-admin {
+    .btn-primary {
       background: var(--primary);
       color: white;
     }
     
-    .btn-admin:hover {
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-secondary {
+      background: var(--bg2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
       opacity: 0.9;
     }
     
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 24px 20px;
     }
     
     .title {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 20px;
     }
     
     .subtitle {
-      font-size: 14px;
       color: var(--text-sec);
       margin-bottom: 24px;
-    }
-    
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      background: var(--bg);
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      overflow-x: auto;
-    }
-    
-    .tab-btn {
-      padding: 8px 16px;
-      background: transparent;
-      color: var(--text-sec);
-      border-radius: 6px;
-      white-space: nowrap;
-      transition: all 0.15s;
-    }
-    
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .tab-btn:hover {
-      color: var(--text);
     }
     
     .controls {
       display: flex;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .category-btn {
+      padding: 8px 14px;
       background: var(--bg);
-      padding: 12px;
-      border-radius: 8px;
       border: 1px solid var(--border);
-      align-items: center;
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    
+    .category-btn:hover {
+      border-color: var(--primary);
+    }
+    
+    .category-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
     }
     
     .search-box {
       flex: 1;
+      min-width: 200px;
       padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: 6px;
       background: var(--bg);
       color: var(--text);
-      font-size: 14px;
+      font-family: inherit;
+      font-size: 13px;
     }
     
-    .search-box::placeholder {
-      color: var(--text-sec);
-    }
-    
-    .refresh-btn {
-      background: var(--primary);
-      color: white;
-      padding: 8px 14px;
+    .search-box:focus {
+      outline: none;
+      border-color: var(--primary);
     }
     
     .stats {
-      display: flex;
-      gap: 12px;
+      background: var(--bg);
+      padding: 12px 16px;
+      border-radius: 6px;
       margin-bottom: 20px;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-sec);
+      border: 1px solid var(--border);
     }
     
     .news-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      display: grid;
+      gap: 16px;
     }
     
-    .news-card {
+    .news-item {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 16px;
+      padding: 20px;
       transition: all 0.15s;
     }
     
-    .news-card:hover {
+    .news-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       border-color: var(--primary);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
     
-    .news-meta {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    
-    .news-category {
+    .news-badge {
       display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
+      padding: 4px 8px;
       background: var(--primary);
       color: white;
-      padding: 3px 8px;
       border-radius: 4px;
-    }
-    
-    .news-source {
-      font-size: 12px;
-      color: var(--text-sec);
-    }
-    
-    .news-time {
-      font-size: 12px;
-      color: var(--text-sec);
-      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
     }
     
     .news-title {
@@ -257,29 +230,39 @@
       line-height: 1.4;
     }
     
+    .news-title.translated {
+      color: var(--accent);
+      font-style: italic;
+    }
+    
     .news-desc {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-sec);
       line-height: 1.5;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .news-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-sec);
+    }
+    
+    .news-meta {
+      display: flex;
+      gap: 12px;
     }
     
     .news-link {
-      display: inline-block;
       color: var(--primary);
       text-decoration: none;
-      font-size: 13px;
       font-weight: 500;
     }
     
     .news-link:hover {
       text-decoration: underline;
-    }
-    
-    .empty {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-sec);
     }
     
     .loading {
@@ -299,200 +282,235 @@
     }
     
     @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .trial-badge {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .admin-badge {
+      background: #dbeafe;
+      color: #0c4a6e;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-sec);
+    }
   </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <div class="header">
-  <div>
-    <div class="logo">NewsPulse</div>
-    <div class="logo-sub">Finance · Crypto · AI · Tech</div>
+  <div class="header-left">
+    <div class="logo">🎛️ NewsPulse</div>
   </div>
   
   <div class="header-right">
-    <div class="user-info">
-      <div class="user-name" id="userName">Loading...</div>
+    <div class="user-info" id="userInfo">
+      <div class="user-name" id="userName">User</div>
       <div class="user-status" id="userStatus">Loading...</div>
     </div>
     
-    <button class="btn-admin" id="adminBtn" style="display:none;" onclick="goAdmin()">🔧 Admin</button>
-    <button class="btn-logout" onclick="logout()">Logout</button>
+    <button class="btn-secondary" id="translateBtn" onclick="toggleTranslate()" title="Translate to Indonesian">
+      🌐 English
+    </button>
+    
+    <button class="btn-secondary" id="adminBtn" style="display:none;" onclick="goAdmin()">
+      👨‍💼 Admin
+    </button>
+    
+    <button class="btn-danger" onclick="logout()">Logout</button>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="container">
-  <div class="title">NewsPulse</div>
-  <div class="subtitle">Multi-Category News Dashboard</div>
-  
-  <!-- TABS -->
-  <div class="tabs" id="tabs">
-    <button class="tab-btn active" onclick="filterCategory('all')">📰 Semua</button>
-    <button class="tab-btn" onclick="filterCategory('finance')">💰 Finance</button>
-    <button class="tab-btn" onclick="filterCategory('crypto')">₿ Crypto</button>
-    <button class="tab-btn" onclick="filterCategory('ai')">🤖 AI</button>
-    <button class="tab-btn" onclick="filterCategory('tech')">⚙️ Tech & Chip</button>
-  </div>
+  <div class="title">📰 Financial & Tech News</div>
+  <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
   
   <!-- CONTROLS -->
   <div class="controls">
+    <button class="category-btn active" data-cat="all" onclick="filterCategory('all')">📊 Semua</button>
+    <button class="category-btn" data-cat="finance" onclick="filterCategory('finance')">💰 Finance</button>
+    <button class="category-btn" data-cat="crypto" onclick="filterCategory('crypto')">₿ Crypto</button>
+    <button class="category-btn" data-cat="ai" onclick="filterCategory('ai')">🤖 AI</button>
+    <button class="category-btn" data-cat="tech" onclick="filterCategory('tech')">💻 Tech & Chip</button>
+    
     <input type="text" class="search-box" id="searchBox" placeholder="Cari berita..." onkeyup="filterNews()">
-    <button class="refresh-btn" onclick="refreshNews()">🔄 Refresh</button>
+    
+    <button class="btn-primary" onclick="refreshNews()">🔄 Refresh</button>
   </div>
   
   <!-- STATS -->
-  <div class="stats">
-    <span>Total: <strong id="totalCount">0</strong></span>
-    <span>Ditampilkan: <strong id="displayCount">0</strong></span>
-  </div>
+  <div class="stats" id="stats">Total: 0 | Ditampilkan: 0</div>
   
   <!-- NEWS LIST -->
-  <div class="news-list" id="newsList">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p style="margin-top: 12px;">Loading news...</p>
-    </div>
-  </div>
+  <div class="news-list" id="newsList"></div>
 </div>
 
 <script>
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 
 let allNews = [];
+let isTranslated = false;
 let currentCategory = 'all';
-let currentUser = null;
 
-// ── AUTO-REDIRECT: Jika belum login ────────────────────────────────────
-function checkAuth() {
+async function init() {
   const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
   if (!token) {
     window.location.href = 'login.html';
-    return false;
-  }
-  return true;
-}
-
-// ── LOAD USER INFO ─────────────────────────────────────────────────────
-async function loadUserInfo() {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/api/auth/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error);
-    
-    currentUser = data.user;
-    
-    document.getElementById('userName').textContent = currentUser.name;
-    
-    if (currentUser.is_admin) {
-      document.getElementById('userStatus').textContent = '✅ Admin — Full Access';
-      document.getElementById('userStatus').classList.add('admin');
-      document.getElementById('adminBtn').style.display = 'block';
-    } else if (currentUser.subscription_status === 'free_trial') {
-      document.getElementById('userStatus').textContent = `Free Trial — ${currentUser.trial_days_remaining} hari tersisa`;
-      document.getElementById('userStatus').classList.add('trial');
-    } else if (currentUser.subscription_status === 'premium') {
-      document.getElementById('userStatus').textContent = '⭐ Premium';
-    } else {
-      document.getElementById('userStatus').textContent = 'Free Trial (Expired)';
-    }
-    
-  } catch (error) {
-    console.error('Error loading user info:', error);
-    localStorage.removeItem('token');
-    window.location.href = 'login.html';
-  }
-}
-
-// ── FETCH NEWS ─────────────────────────────────────────────────────────
-async function fetchNews() {
-  try {
-    document.getElementById('newsList').innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top: 12px;">Loading news...</p></div>';
-    
-    const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/api/news`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error);
-    
-    allNews = data.news || [];
-    document.getElementById('totalCount').textContent = allNews.length;
-    
-    filterNews();
-  } catch (error) {
-    console.error('Error fetching news:', error);
-    document.getElementById('newsList').innerHTML = '<div class="empty">❌ Failed to load news. Please try again.</div>';
-  }
-}
-
-// ── FILTER & DISPLAY NEWS ──────────────────────────────────────────────
-function filterNews() {
-  const searchText = document.getElementById('searchBox').value.toLowerCase();
-  
-  let filtered = allNews.filter(news => {
-    const matchCategory = currentCategory === 'all' || news.category === currentCategory;
-    const matchSearch = news.title.toLowerCase().includes(searchText) || 
-                       news.description.toLowerCase().includes(searchText);
-    return matchCategory && matchSearch;
-  });
-  
-  document.getElementById('displayCount').textContent = filtered.length;
-  
-  if (filtered.length === 0) {
-    document.getElementById('newsList').innerHTML = '<div class="empty">Tidak ada berita ditemukan</div>';
     return;
   }
   
-  document.getElementById('newsList').innerHTML = filtered.map(news => `
-    <div class="news-card">
-      <div class="news-meta">
-        <span class="news-category">${news.category}</span>
-        <span class="news-source">${news.source}</span>
-        <span class="news-time">now</span>
-      </div>
-      <div class="news-title">${news.title}</div>
-      <div class="news-desc">${news.description}</div>
-      <a href="${news.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
-    </div>
-  `).join('');
+  document.getElementById('userName').textContent = user.name || 'User';
+  
+  if (user.is_admin) {
+    document.getElementById('adminBtn').style.display = 'flex';
+    document.getElementById('userStatus').innerHTML = `
+      <span class="admin-badge">✅ Admin — Full Access</span>
+    `;
+  } else {
+    const daysLeft = user.trial_days_remaining || 5;
+    document.getElementById('userStatus').innerHTML = `
+      <span class="trial-badge">📅 Free Trial — ${daysLeft} hari tersisa</span>
+    `;
+  }
+  
+  await loadNews();
 }
 
-function filterCategory(category) {
-  currentCategory = category;
+async function loadNews() {
+  try {
+    document.getElementById('newsList').innerHTML = `
+      <div class="loading">
+        <div class="spinner"></div>
+        <p style="margin-top:12px;">Loading news...</p>
+      </div>
+    `;
+    
+    const token = localStorage.getItem('token');
+    const url = isTranslated 
+      ? `${API_URL}/api/news?translate=id`
+      : `${API_URL}/api/news`;
+    
+    const res = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    const data = await res.json();
+    
+    if (!data.ok) {
+      document.getElementById('newsList').innerHTML = `<div class="empty">❌ Failed to load news</div>`;
+      return;
+    }
+    
+    allNews = data.news || [];
+    filterNews();
+    
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('newsList').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
+  }
+}
+
+function filterCategory(cat) {
+  currentCategory = cat;
   
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
   
   filterNews();
 }
 
-function refreshNews() {
-  fetchNews();
+function filterNews() {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  
+  let filtered = allNews;
+  
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(n => n.category === currentCategory);
+  }
+  
+  if (search) {
+    filtered = filtered.filter(n => 
+      (isTranslated ? (n.title_id || n.title).toLowerCase() : n.title.toLowerCase()).includes(search)
+    );
+  }
+  
+  renderNews(filtered);
+  updateStats(filtered);
 }
 
-// ── GO TO ADMIN ────────────────────────────────────────────────────────
+function renderNews(news) {
+  const container = document.getElementById('newsList');
+  
+  if (news.length === 0) {
+    container.innerHTML = '<div class="empty">📭 No news found</div>';
+    return;
+  }
+  
+  container.innerHTML = news.map(item => `
+    <div class="news-item">
+      <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
+      <div class="news-title ${isTranslated ? 'translated' : ''}">
+        ${isTranslated ? (item.title_id || item.title) : item.title}
+      </div>
+      <div class="news-desc">
+        ${isTranslated ? (item.description_id || item.description) : item.description}
+      </div>
+      <div class="news-footer">
+        <div class="news-meta">
+          <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
+        </div>
+        <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateStats(news) {
+  const stats = document.getElementById('stats');
+  stats.textContent = `Total: ${allNews.length} | Ditampilkan: ${news.length}`;
+}
+
+function toggleTranslate() {
+  isTranslated = !isTranslated;
+  const btn = document.getElementById('translateBtn');
+  btn.textContent = isTranslated ? '🌐 Indonesian' : '🌐 English';
+  loadNews();
+}
+
+function refreshNews() {
+  loadNews();
+}
+
 function goAdmin() {
   window.location.href = 'admin.html';
 }
 
-// ── LOGOUT ─────────────────────────────────────────────────────────────
 function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = 'login.html';
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────
-if (checkAuth()) {
-  loadUserInfo();
-  fetchNews();
-}
+// Init
+init();
 </script>
 
 </body>
