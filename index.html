@@ -190,6 +190,9 @@
       text-decoration: none;
       font-weight: 500;
     }
+    .news-link:hover {
+      text-decoration: underline;
+    }
     .loading {
       text-align: center;
       padding: 40px 20px;
@@ -225,10 +228,6 @@
       text-align: center;
       padding: 60px 20px;
       color: var(--text-sec);
-    }
-    .translating {
-      font-style: italic;
-      opacity: 0.6;
     }
   </style>
 </head>
@@ -278,6 +277,7 @@
 <script>
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 let allNews = [];
+let allNewsId = [];
 let currentCategory = 'all';
 
 async function init() {
@@ -307,75 +307,52 @@ async function loadNews() {
     document.getElementById('newsList').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
     
     const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/api/news`, {
+    
+    // Load English news
+    const resEn = await fetch(`${API_URL}/api/news`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    const dataEn = await resEn.json();
     
-    const data = await res.json();
-    if (!data.ok) {
+    // Load Indonesian news
+    const resId = await fetch(`${API_URL}/api/news?translate=id`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const dataId = await resId.json();
+    
+    if (!dataEn.ok || !dataId.ok) {
       document.getElementById('newsList').innerHTML = '<div class="empty">❌ Failed to load news</div>';
       return;
     }
     
-    // DEDUPLICATE by title
+    // Deduplicate and merge
     const seen = new Set();
-    allNews = (data.news || []).filter(item => {
+    allNews = (dataEn.news || []).filter(item => {
       if (seen.has(item.title)) return false;
       seen.add(item.title);
       return true;
     });
     
-    // AUTO-TRANSLATE all news
-    await translateAllNews();
+    // Create map dari Indonesian news by title
+    const idMap = {};
+    (dataId.news || []).forEach(item => {
+      idMap[item.title] = item;
+    });
+    
+    // Merge data
+    allNews = allNews.map(enItem => {
+      const idItem = idMap[enItem.title];
+      return {
+        ...enItem,
+        title_id: idItem?.title_id || enItem.title,
+        description_id: idItem?.description_id || enItem.description,
+      };
+    });
     
     filterNews();
   } catch (error) {
     document.getElementById('newsList').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
   }
-}
-
-async function translateAllNews() {
-  for (let i = 0; i < allNews.length; i++) {
-    if (!allNews[i].title_id) {
-      allNews[i].title_id = await translateText(allNews[i].title);
-    }
-    if (!allNews[i].description_id) {
-      allNews[i].description_id = await translateText(allNews[i].description);
-    }
-  }
-}
-
-async function translateText(text, retries = 3) {
-  for (let attempt = 0; attempt < retries; attempt++) {
-    try {
-      const res = await fetch('https://libretranslate.de/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          q: text,
-          source: 'en',
-          target: 'id',
-        }),
-        timeout: 8000,
-      });
-      
-      if (!res.ok) {
-        console.warn(`Translation attempt ${attempt + 1} failed with status ${res.status}`);
-        continue;
-      }
-      
-      const data = await res.json();
-      if (data.translatedText && data.translatedText.trim() !== '' && data.translatedText !== text) {
-        return data.translatedText;
-      }
-    } catch (error) {
-      console.warn(`Translation attempt ${attempt + 1} error:`, error.message);
-      if (attempt < retries - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
-      }
-    }
-  }
-  return text; // Fallback to original
 }
 
 function filterCategory(cat) {
@@ -411,7 +388,7 @@ function renderNews(news) {
     return;
   }
   
-  container.innerHTML = news.map((item, idx) => `
+  container.innerHTML = news.map(item => `
     <div class="news-item">
       <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
       
@@ -429,8 +406,8 @@ function renderNews(news) {
       <!-- INDONESIAN VERSION -->
       <div class="news-section">
         <div class="news-lang">🇮🇩 Bahasa Indonesia</div>
-        <div class="news-title news-title-id">${item.title_id || item.title}</div>
-        <div class="news-desc">${item.description_id || item.description}</div>
+        <div class="news-title news-title-id">${item.title_id}</div>
+        <div class="news-desc">${item.description_id}</div>
         <div class="news-footer">
           <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
           <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
