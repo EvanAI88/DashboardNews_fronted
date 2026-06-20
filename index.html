@@ -6,24 +6,8 @@
   <title>NewsPulse</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #ffffff;
-      --bg2: #f9fafb;
-      --text: #111827;
-      --text-sec: #6b7280;
-      --border: rgba(0,0,0,0.08);
-      --primary: #3b82f6;
-      --accent: #10b981;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f172a;
-        --bg2: #1e293b;
-        --text: #f1f5f9;
-        --text-sec: #cbd5e1;
-        --border: rgba(255,255,255,0.1);
-      }
-    }
+    :root { --bg: #ffffff; --bg2: #f9fafb; --text: #111827; --text-sec: #6b7280; --border: rgba(0,0,0,0.08); --primary: #3b82f6; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0f172a; --bg2: #1e293b; --text: #f1f5f9; --text-sec: #cbd5e1; --border: rgba(255,255,255,0.1); } }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg2); color: var(--text); }
     .header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
     .logo { font-size: 20px; font-weight: 700; }
@@ -48,11 +32,7 @@
     .news-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
     .news-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary); }
     .news-badge { display: inline-block; padding: 4px 8px; background: var(--primary); color: white; border-radius: 4px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
-    .news-section { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-    .news-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-    .news-lang { font-size: 11px; font-weight: 600; color: var(--primary); margin-bottom: 8px; text-transform: uppercase; }
     .news-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
-    .news-title-id { color: var(--accent); }
     .news-desc { font-size: 13px; color: var(--text-sec); line-height: 1.5; margin-bottom: 12px; }
     .news-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-sec); }
     .news-link { color: var(--primary); text-decoration: none; font-weight: 500; }
@@ -80,7 +60,7 @@
 
 <div class="container">
   <div class="title">📰 Financial & Tech News</div>
-  <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech (English & Indonesian)</div>
+  <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
   
   <div class="controls">
     <button class="category-btn active" data-cat="all" onclick="filterCategory('all')">📊 Semua</button>
@@ -128,9 +108,7 @@ async function loadNews() {
     document.getElementById('newsList').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
     
     const token = localStorage.getItem('token');
-    
-    // SINGLE API CALL dengan translate=id
-    const res = await fetch(`${API_URL}/api/news?translate=id`, {
+    const res = await fetch(`${API_URL}/api/news`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
@@ -140,7 +118,6 @@ async function loadNews() {
       return;
     }
     
-    // Deduplicate by title
     const seen = new Set();
     allNews = (data.news || []).filter(item => {
       if (seen.has(item.title)) return false;
@@ -170,10 +147,7 @@ function filterNews() {
   }
   
   if (search) {
-    filtered = filtered.filter(n => 
-      n.title.toLowerCase().includes(search) || 
-      (n.title_id && n.title_id.toLowerCase().includes(search))
-    );
+    filtered = filtered.filter(n => n.title.toLowerCase().includes(search));
   }
   
   renderNews(filtered);
@@ -190,25 +164,11 @@ function renderNews(news) {
   container.innerHTML = news.map(item => `
     <div class="news-item">
       <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
-      
-      <div class="news-section">
-        <div class="news-lang">🇬🇧 English</div>
-        <div class="news-title">${item.title}</div>
-        <div class="news-desc">${item.description}</div>
-        <div class="news-footer">
-          <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
-          <a href="${item.link}" target="_blank" class="news-link">Read more →</a>
-        </div>
-      </div>
-      
-      <div class="news-section">
-        <div class="news-lang">🇮🇩 Bahasa Indonesia</div>
-        <div class="news-title news-title-id">${item.title_id || item.title}</div>
-        <div class="news-desc">${item.description_id || item.description}</div>
-        <div class="news-footer">
-          <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
-          <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
-        </div>
+      <div class="news-title">${item.title}</div>
+      <div class="news-desc">${item.description}</div>
+      <div class="news-footer">
+        <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
+        <a href="${item.link}" target="_blank" class="news-link">Read more →</a>
       </div>
     </div>
   `).join('');
