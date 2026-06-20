@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NewsPulse — Multi-Category News Dashboard</title>
+  <title>NewsPulse</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     :root {
       --bg: #ffffff;
       --bg2: #f9fafb;
@@ -16,7 +15,6 @@
       --primary: #3b82f6;
       --accent: #10b981;
     }
-    
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0f172a;
@@ -26,15 +24,11 @@
         --border: rgba(255,255,255,0.1);
       }
     }
-    
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg2);
       color: var(--text);
-      margin: 0;
-      padding: 0;
     }
-    
     .header {
       background: var(--bg);
       border-bottom: 1px solid var(--border);
@@ -46,39 +40,11 @@
       top: 0;
       z-index: 100;
     }
-    
-    .header-left {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-    }
-    
-    .logo {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    
-    .header-right {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    
-    .user-info {
-      font-size: 13px;
-      text-align: right;
-    }
-    
-    .user-name {
-      font-weight: 600;
-      color: var(--text);
-    }
-    
-    .user-status {
-      font-size: 11px;
-      color: var(--text-sec);
-    }
-    
+    .logo { font-size: 20px; font-weight: 700; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .user-info { font-size: 13px; text-align: right; }
+    .user-name { font-weight: 600; }
+    .user-status { font-size: 11px; color: var(--text-sec); }
     button {
       font-family: inherit;
       border: none;
@@ -87,63 +53,42 @@
       font-size: 13px;
       padding: 8px 12px;
       transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
-    
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      opacity: 0.9;
-    }
-    
-    .btn-secondary {
+    .btn-translate {
       background: var(--bg2);
       color: var(--text);
       border: 1px solid var(--border);
     }
-    
-    .btn-secondary:hover {
+    .btn-translate:hover {
       background: var(--border);
     }
-    
-    .btn-danger {
+    .btn-admin {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-admin:hover {
+      opacity: 0.9;
+    }
+    .btn-logout {
       background: #ef4444;
       color: white;
     }
-    
-    .btn-danger:hover {
+    .btn-logout:hover {
       opacity: 0.9;
     }
-    
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 24px 20px;
     }
-    
-    .title {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-    
-    .subtitle {
-      color: var(--text-sec);
-      margin-bottom: 24px;
-    }
-    
+    .title { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
+    .subtitle { color: var(--text-sec); margin-bottom: 24px; }
     .controls {
       display: flex;
       gap: 12px;
       margin-bottom: 24px;
       flex-wrap: wrap;
     }
-    
     .category-btn {
       padding: 8px 14px;
       background: var(--bg);
@@ -155,17 +100,14 @@
       font-weight: 500;
       transition: all 0.15s;
     }
-    
     .category-btn:hover {
       border-color: var(--primary);
     }
-    
     .category-btn.active {
       background: var(--primary);
       color: white;
       border-color: var(--primary);
     }
-    
     .search-box {
       flex: 1;
       min-width: 200px;
@@ -175,14 +117,18 @@
       background: var(--bg);
       color: var(--text);
       font-family: inherit;
-      font-size: 13px;
     }
-    
     .search-box:focus {
       outline: none;
       border-color: var(--primary);
     }
-    
+    .btn-refresh {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-refresh:hover {
+      opacity: 0.9;
+    }
     .stats {
       background: var(--bg);
       padding: 12px 16px;
@@ -192,25 +138,17 @@
       color: var(--text-sec);
       border: 1px solid var(--border);
     }
-    
-    .news-list {
-      display: grid;
-      gap: 16px;
-    }
-    
+    .news-list { display: grid; gap: 16px; }
     .news-item {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 20px;
-      transition: all 0.15s;
     }
-    
     .news-item:hover {
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       border-color: var(--primary);
     }
-    
     .news-badge {
       display: inline-block;
       padding: 4px 8px;
@@ -221,27 +159,22 @@
       font-weight: 600;
       margin-bottom: 8px;
     }
-    
     .news-title {
       font-size: 16px;
       font-weight: 600;
-      color: var(--text);
       margin-bottom: 8px;
       line-height: 1.4;
     }
-    
     .news-title.translated {
       color: var(--accent);
       font-style: italic;
     }
-    
     .news-desc {
       font-size: 13px;
       color: var(--text-sec);
       line-height: 1.5;
       margin-bottom: 12px;
     }
-    
     .news-footer {
       display: flex;
       justify-content: space-between;
@@ -249,28 +182,19 @@
       font-size: 12px;
       color: var(--text-sec);
     }
-    
-    .news-meta {
-      display: flex;
-      gap: 12px;
-    }
-    
     .news-link {
       color: var(--primary);
       text-decoration: none;
       font-weight: 500;
     }
-    
     .news-link:hover {
       text-decoration: underline;
     }
-    
     .loading {
       text-align: center;
       padding: 40px 20px;
       color: var(--text-sec);
     }
-    
     .spinner {
       display: inline-block;
       width: 20px;
@@ -280,18 +204,7 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    
     @keyframes spin { to { transform: rotate(360deg); } }
-    
-    .trial-badge {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    
     .admin-badge {
       background: #dbeafe;
       color: #0c4a6e;
@@ -300,7 +213,14 @@
       font-size: 12px;
       font-weight: 600;
     }
-    
+    .trial-badge {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
     .empty {
       text-align: center;
       padding: 60px 20px;
@@ -312,25 +232,22 @@
 
 <!-- HEADER -->
 <div class="header">
-  <div class="header-left">
-    <div class="logo">🎛️ NewsPulse</div>
-  </div>
+  <div class="logo">🎛️ NewsPulse</div>
   
   <div class="header-right">
-    <div class="user-info" id="userInfo">
+    <div class="user-info">
       <div class="user-name" id="userName">User</div>
       <div class="user-status" id="userStatus">Loading...</div>
     </div>
     
-    <button class="btn-secondary" id="translateBtn" onclick="toggleTranslate()" title="Translate to Indonesian">
-      🌐 English
-    </button>
+    <!-- TRANSLATE BUTTON - GUARANTEED HERE -->
+    <button class="btn-translate" id="translateBtn" onclick="toggleTranslate()">🌐 English</button>
     
-    <button class="btn-secondary" id="adminBtn" style="display:none;" onclick="goAdmin()">
-      👨‍💼 Admin
-    </button>
+    <!-- ADMIN BUTTON -->
+    <button class="btn-admin" id="adminBtn" style="display:none;" onclick="goAdmin()">👨‍💼 Admin</button>
     
-    <button class="btn-danger" onclick="logout()">Logout</button>
+    <!-- LOGOUT BUTTON -->
+    <button class="btn-logout" onclick="logout()">Logout</button>
   </div>
 </div>
 
@@ -349,7 +266,7 @@
     
     <input type="text" class="search-box" id="searchBox" placeholder="Cari berita..." onkeyup="filterNews()">
     
-    <button class="btn-primary" onclick="refreshNews()">🔄 Refresh</button>
+    <button class="btn-refresh" onclick="refreshNews()">🔄 Refresh</button>
   </div>
   
   <!-- STATS -->
@@ -361,7 +278,6 @@
 
 <script>
 const API_URL = 'https://dashboardnews-backend.onrender.com';
-
 let allNews = [];
 let isTranslated = false;
 let currentCategory = 'all';
@@ -378,15 +294,11 @@ async function init() {
   document.getElementById('userName').textContent = user.name || 'User';
   
   if (user.is_admin) {
-    document.getElementById('adminBtn').style.display = 'flex';
-    document.getElementById('userStatus').innerHTML = `
-      <span class="admin-badge">✅ Admin — Full Access</span>
-    `;
+    document.getElementById('adminBtn').style.display = 'block';
+    document.getElementById('userStatus').innerHTML = '<span class="admin-badge">✅ Admin — Full Access</span>';
   } else {
     const daysLeft = user.trial_days_remaining || 5;
-    document.getElementById('userStatus').innerHTML = `
-      <span class="trial-badge">📅 Free Trial — ${daysLeft} hari tersisa</span>
-    `;
+    document.getElementById('userStatus').innerHTML = `<span class="trial-badge">📅 Free Trial — ${daysLeft} hari tersisa</span>`;
   }
   
   await loadNews();
@@ -394,52 +306,37 @@ async function init() {
 
 async function loadNews() {
   try {
-    document.getElementById('newsList').innerHTML = `
-      <div class="loading">
-        <div class="spinner"></div>
-        <p style="margin-top:12px;">Loading news...</p>
-      </div>
-    `;
+    document.getElementById('newsList').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
     
     const token = localStorage.getItem('token');
-    const url = isTranslated 
-      ? `${API_URL}/api/news?translate=id`
-      : `${API_URL}/api/news`;
+    const url = isTranslated ? `${API_URL}/api/news?translate=id` : `${API_URL}/api/news`;
     
     const res = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
     const data = await res.json();
-    
     if (!data.ok) {
-      document.getElementById('newsList').innerHTML = `<div class="empty">❌ Failed to load news</div>`;
+      document.getElementById('newsList').innerHTML = '<div class="empty">❌ Failed to load news</div>';
       return;
     }
     
     allNews = data.news || [];
     filterNews();
-    
   } catch (error) {
-    console.error('Error:', error);
     document.getElementById('newsList').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
   }
 }
 
 function filterCategory(cat) {
   currentCategory = cat;
-  
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
+  document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
-  
   filterNews();
 }
 
 function filterNews() {
   const search = document.getElementById('searchBox').value.toLowerCase();
-  
   let filtered = allNews;
   
   if (currentCategory !== 'all') {
@@ -448,17 +345,16 @@ function filterNews() {
   
   if (search) {
     filtered = filtered.filter(n => 
-      (isTranslated ? (n.title_id || n.title).toLowerCase() : n.title.toLowerCase()).includes(search)
+      (isTranslated ? (n.title_id || n.title) : n.title).toLowerCase().includes(search)
     );
   }
   
   renderNews(filtered);
-  updateStats(filtered);
+  document.getElementById('stats').textContent = `Total: ${allNews.length} | Ditampilkan: ${filtered.length}`;
 }
 
 function renderNews(news) {
   const container = document.getElementById('newsList');
-  
   if (news.length === 0) {
     container.innerHTML = '<div class="empty">📭 No news found</div>';
     return;
@@ -474,18 +370,11 @@ function renderNews(news) {
         ${isTranslated ? (item.description_id || item.description) : item.description}
       </div>
       <div class="news-footer">
-        <div class="news-meta">
-          <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
-        </div>
+        <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
         <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
       </div>
     </div>
   `).join('');
-}
-
-function updateStats(news) {
-  const stats = document.getElementById('stats');
-  stats.textContent = `Total: ${allNews.length} | Ditampilkan: ${news.length}`;
 }
 
 function toggleTranslate() {
@@ -509,7 +398,6 @@ function logout() {
   window.location.href = 'login.html';
 }
 
-// Init
 init();
 </script>
 
