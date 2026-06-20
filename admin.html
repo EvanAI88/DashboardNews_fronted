@@ -6,7 +6,6 @@
   <title>NewsPulse — Admin Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     :root {
       --bg: #ffffff;
       --bg2: #f9fafb;
@@ -14,10 +13,7 @@
       --text-sec: #6b7280;
       --border: rgba(0,0,0,0.08);
       --primary: #3b82f6;
-      --success: #10b981;
-      --danger: #ef4444;
     }
-    
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0f172a;
@@ -27,13 +23,11 @@
         --border: rgba(255,255,255,0.1);
       }
     }
-    
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg2);
       color: var(--text);
     }
-    
     .header {
       background: var(--bg);
       border-bottom: 1px solid var(--border);
@@ -42,23 +36,8 @@
       justify-content: space-between;
       align-items: center;
     }
-    
-    .logo {
-      font-size: 22px;
-      font-weight: 700;
-    }
-    
-    .header-right {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    
-    .user-name {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
+    .logo { font-size: 22px; font-weight: 700; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
     button {
       font-family: inherit;
       border: none;
@@ -68,61 +47,30 @@
       padding: 8px 14px;
       transition: all 0.15s;
     }
-    
-    .btn-logout {
-      background: var(--danger);
-      color: white;
-    }
-    
-    .btn-logout:hover {
-      opacity: 0.9;
-    }
-    
-    .btn-back {
-      background: var(--primary);
-      color: white;
-    }
-    
+    .btn-back { background: var(--primary); color: white; }
+    .btn-back:hover { opacity: 0.9; }
+    .btn-logout { background: #ef4444; color: white; }
+    .btn-logout:hover { opacity: 0.9; }
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 30px 20px;
     }
-    
-    .title {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 24px;
-    }
-    
+    .title { font-size: 28px; font-weight: 700; margin-bottom: 24px; }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 16px;
       margin-bottom: 32px;
     }
-    
     .stat-card {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 20px;
     }
-    
-    .stat-label {
-      font-size: 13px;
-      color: var(--text-sec);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-    
-    .stat-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    
+    .stat-label { font-size: 13px; color: var(--text-sec); text-transform: uppercase; margin-bottom: 8px; }
+    .stat-value { font-size: 32px; font-weight: 700; }
     .table-section {
       background: var(--bg);
       border: 1px solid var(--border);
@@ -130,67 +78,15 @@
       padding: 20px;
       margin-top: 20px;
     }
-    
-    .table-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    
-    th {
-      background: var(--bg2);
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      color: var(--text);
-      border-bottom: 1px solid var(--border);
-    }
-    
-    td {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    
-    tr:hover {
-      background: var(--bg2);
-    }
-    
-    .status-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    
-    .status-trial {
-      background: #fef3c7;
-      color: #92400e;
-    }
-    
-    .status-premium {
-      background: #dcfce7;
-      color: #166534;
-    }
-    
-    .status-admin {
-      background: #dbeafe;
-      color: #0c4a6e;
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-sec);
-    }
-    
+    .table-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--bg2); padding: 12px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); }
+    tr:hover { background: var(--bg2); }
+    .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .status-admin { background: #dbeafe; color: #0c4a6e; }
+    .status-trial { background: #fef3c7; color: #92400e; }
+    .loading { text-align: center; padding: 40px; color: var(--text-sec); }
     .spinner {
       display: inline-block;
       width: 20px;
@@ -200,27 +96,23 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="logo">🎛️ NewsPulse Admin</div>
   <div class="header-right">
-    <span class="user-name" id="userName">Admin</span>
+    <span style="font-size:13px;font-weight:600;">Admin Dashboard</span>
     <button class="btn-back" onclick="goNews()">← Back to News</button>
     <button class="btn-logout" onclick="logout()">Logout</button>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="container">
   <div class="title">Dashboard</div>
   
-  <!-- STATS -->
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Total Users</div>
@@ -240,7 +132,6 @@
     </div>
   </div>
   
-  <!-- USERS TABLE -->
   <div class="table-section">
     <div class="table-title">Users Management</div>
     <div id="usersLoading" class="loading" style="display:none;">
@@ -268,12 +159,11 @@ async function checkAdmin() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   
-  if (!token || !user.is_admin) {
+  // Check admin by email (most reliable)
+  if (!token || user.email !== 'admin@newspulse.com') {
     window.location.href = 'login.html';
     return;
   }
-  
-  document.getElementById('userName').textContent = user.name;
 }
 
 async function loadStats() {
@@ -292,7 +182,7 @@ async function loadStats() {
     document.getElementById('trialUsers').textContent = stats.trialUsers;
     document.getElementById('totalRevenue').textContent = '$' + stats.revenue.toFixed(2);
   } catch (error) {
-    console.error('Error loading stats:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -315,13 +205,16 @@ async function loadUsers() {
     
     users.forEach(user => {
       const date = new Date(user.created_at).toLocaleDateString('id-ID');
-      const statusBadge = getStatusBadge(user.subscription_status);
+      const isAdmin = user.email === 'admin@newspulse.com';
+      const status = isAdmin ? 
+        '<span class="status-badge status-admin">👨‍💼 Admin</span>' :
+        '<span class="status-badge status-trial">📅 Free Trial</span>';
       
       tbody.innerHTML += `
         <tr>
           <td>${user.email}</td>
           <td>${user.name}</td>
-          <td>${statusBadge}</td>
+          <td>${status}</td>
           <td>${date}</td>
         </tr>
       `;
@@ -330,19 +223,9 @@ async function loadUsers() {
     document.getElementById('usersLoading').style.display = 'none';
     document.getElementById('usersTable').style.display = 'table';
   } catch (error) {
-    console.error('Error loading users:', error);
+    console.error('Error:', error);
     document.getElementById('usersLoading').innerHTML = '<p>❌ Failed to load users</p>';
   }
-}
-
-function getStatusBadge(status) {
-  const badges = {
-    'admin': '<span class="status-badge status-admin">👨‍💼 Admin</span>',
-    'premium': '<span class="status-badge status-premium">⭐ Premium</span>',
-    'free_trial': '<span class="status-badge status-trial">📅 Free Trial</span>',
-    'expired': '<span class="status-badge">❌ Expired</span>',
-  };
-  return badges[status] || `<span>${status}</span>`;
 }
 
 function goNews() {
@@ -355,7 +238,6 @@ function logout() {
   window.location.href = 'login.html';
 }
 
-// Init
 checkAdmin();
 loadStats();
 loadUsers();
