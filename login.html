@@ -3,421 +3,192 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NewsPulse — Login & Register</title>
+  <title>NewsPulse - Login</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    :root {
-      --bg: #ffffff;
-      --bg2: #f9fafb;
-      --text: #111827;
-      --text-sec: #6b7280;
-      --border: rgba(0,0,0,0.08);
-      --primary: #3b82f6;
-      --error: #ef4444;
-      --success: #10b981;
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f172a;
-        --bg2: #1e293b;
-        --text: #f1f5f9;
-        --text-sec: #cbd5e1;
-        --border: rgba(255,255,255,0.1);
-      }
-    }
-    
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(135deg, var(--bg2) 0%, var(--bg) 100%);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .container {
-      width: 100%;
-      max-width: 420px;
-      background: var(--bg);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 40px 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    
-    .logo {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    
-    .logo-text {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    
-    .logo-sub {
-      font-size: 13px;
-      color: var(--text-sec);
-    }
-    
-    .tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    
-    .tab-btn {
-      flex: 1;
-      padding: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: inherit;
-      background: none;
-      border: none;
-      color: var(--text-sec);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
-    }
-    
-    .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-    
-    .form-group {
-      margin-bottom: 16px;
-    }
-    
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    
-    input {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 14px;
-      font-family: inherit;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    
-    input:focus {
-      border-color: var(--primary);
-    }
-    
-    .btn {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: inherit;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-primary:hover:not(:disabled) {
-      opacity: 0.9;
-    }
-    
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
-    .spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    
-    @keyframes spin { to { transform: rotate(360deg); } }
-    
-    .error-msg {
-      background: #fee2e2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      display: none;
-    }
-    
-    .error-msg.show {
-      display: block;
-    }
-    
-    .success-msg {
-      background: #dcfce7;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      display: none;
-    }
-    
-    .success-msg.show {
-      display: block;
-    }
-    
-    .form-content {
-      display: none;
-    }
-    
-    .form-content.active {
-      display: block;
-    }
-    
-    .trial-info {
-      background: #fef3c7;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-bottom: 16px;
-      text-align: center;
-      line-height: 1.5;
-    }
+    :root { --bg: #ffffff; --bg2: #f9fafb; --text: #111827; --text-sec: #6b7280; --border: rgba(0,0,0,0.08); --primary: #3b82f6; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0f172a; --bg2: #1e293b; --text: #f1f5f9; --text-sec: #cbd5e1; --border: rgba(255,255,255,0.1); } }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg2); color: var(--text); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .container { max-width: 400px; width: 100%; }
+    .card { background: var(--bg); border-radius: 12px; padding: 40px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .logo { font-size: 32px; font-weight: 700; margin-bottom: 8px; text-align: center; }
+    .subtitle { color: var(--text-sec); text-align: center; margin-bottom: 30px; font-size: 14px; }
+    .tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: var(--text-sec); font-weight: 500; border-bottom: 2px solid transparent; }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
+    input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 14px; }
+    input:focus { outline: none; border-color: var(--primary); }
+    button { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.15s; }
+    button:hover { opacity: 0.9; }
+    .error { background: #fee2e2; color: #991b1b; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; border: 1px solid #fecaca; }
+    .success { background: #dcfce7; color: #166534; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; border: 1px solid #bbf7d0; }
+    .loading { opacity: 0.6; pointer-events: none; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  
-  <div class="logo">
-    <div class="logo-text">NewsPulse</div>
-    <div class="logo-sub">Multi-Category News Dashboard</div>
+  <div class="card">
+    <div class="logo">🎛️ NewsPulse</div>
+    <div class="subtitle">Multi-Category News Dashboard</div>
+    
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Masuk</div>
+      <div class="tab" onclick="switchTab('register')">Daftar</div>
+    </div>
+    
+    <!-- LOGIN TAB -->
+    <div id="login" class="tab-content active">
+      <div id="loginError" class="error" style="display:none;"></div>
+      <div id="loginSuccess" class="success" style="display:none;"></div>
+      
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="email@example.com">
+      </div>
+      
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••">
+      </div>
+      
+      <button onclick="handleLogin()">Masuk</button>
+    </div>
+    
+    <!-- REGISTER TAB -->
+    <div id="register" class="tab-content">
+      <div id="regError" class="error" style="display:none;"></div>
+      <div id="regSuccess" class="success" style="display:none;"></div>
+      
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Nama Anda">
+      </div>
+      
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="email@example.com">
+      </div>
+      
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="••••••••">
+      </div>
+      
+      <button onclick="handleRegister()">Daftar</button>
+    </div>
   </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('register')">Daftar</button>
-    <button class="tab-btn" onclick="switchTab('login')">Masuk</button>
-  </div>
-
-  <div id="errorMsg" class="error-msg"></div>
-  <div id="successMsg" class="success-msg"></div>
-
-  <!-- ═══ REGISTER ═══ -->
-  <div class="form-content active" id="registerForm">
-    <div class="trial-info">
-      💡 <strong>Free trial 5 hari</strong> — akses penuh semua kategori berita. Tanpa kartu kredit diperlukan.
-    </div>
-
-    <div class="form-group">
-      <label for="regName">Nama Lengkap</label>
-      <input type="text" id="regName" placeholder="Nama Anda" required>
-    </div>
-
-    <div class="form-group">
-      <label for="regEmail">Email</label>
-      <input type="email" id="regEmail" placeholder="email@example.com" required>
-    </div>
-
-    <div class="form-group">
-      <label for="regPassword">Password</label>
-      <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
-    </div>
-
-    <button type="button" class="btn btn-primary" id="regBtn" onclick="register()">
-      <span id="regBtnText">Daftar Sekarang</span>
-      <span id="regSpinner" class="spinner" style="display:none;"></span>
-    </button>
-  </div>
-
-  <!-- ═══ LOGIN ═══ -->
-  <div class="form-content" id="loginForm">
-    <div class="form-group">
-      <label for="loginEmail">Email</label>
-      <input type="email" id="loginEmail" placeholder="email@example.com" required>
-    </div>
-
-    <div class="form-group">
-      <label for="loginPassword">Password</label>
-      <input type="password" id="loginPassword" placeholder="Password Anda" required>
-    </div>
-
-    <button type="button" class="btn btn-primary" id="loginBtn" onclick="login()">
-      <span id="loginBtnText">Masuk</span>
-      <span id="loginSpinner" class="spinner" style="display:none;"></span>
-    </button>
-  </div>
-
 </div>
 
 <script>
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 
-function showError(message) {
-  const errorMsg = document.getElementById('errorMsg');
-  errorMsg.textContent = '❌ ' + message;
-  errorMsg.classList.add('show');
-  setTimeout(() => errorMsg.classList.remove('show'), 5000);
-}
-
-function showSuccess(message) {
-  const successMsg = document.getElementById('successMsg');
-  successMsg.textContent = '✅ ' + message;
-  successMsg.classList.add('show');
-  setTimeout(() => successMsg.classList.remove('show'), 3000);
-}
-
 function switchTab(tab) {
-  const tabs = document.querySelectorAll('.tab-btn');
-  const forms = document.querySelectorAll('.form-content');
-  
-  tabs.forEach(t => t.classList.remove('active'));
-  forms.forEach(f => f.classList.remove('active'));
-  
-  if (tab === 'register') {
-    tabs[0].classList.add('active');
-    document.getElementById('registerForm').classList.add('active');
-  } else {
-    tabs[1].classList.add('active');
-    document.getElementById('loginForm').classList.add('active');
-  }
-  
-  document.getElementById('errorMsg').classList.remove('show');
-  document.getElementById('successMsg').classList.remove('show');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(tab).classList.add('active');
 }
 
-// REGISTER
-async function register() {
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const password = document.getElementById('regPassword').value;
-  
-  if (!name || !email || !password) {
-    showError('Semua field harus diisi');
-    return;
-  }
-  
-  const btn = document.getElementById('regBtn');
-  const btnText = document.getElementById('regBtnText');
-  const spinner = document.getElementById('regSpinner');
-  
-  btn.disabled = true;
-  btnText.style.display = 'none';
-  spinner.style.display = 'inline-block';
-  
-  try {
-    const res = await fetch(`${API_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
-    });
-    
-    const data = await res.json();
-    
-    if (!data.ok) {
-      showError(data.error || 'Registrasi gagal');
-      return;
-    }
-    
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    
-    showSuccess('Registrasi berhasil! Redirect...');
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 2000);
-    
-  } catch (error) {
-    showError('Network error: ' + error.message);
-  } finally {
-    btn.disabled = false;
-    btnText.style.display = 'inline';
-    spinner.style.display = 'none';
-  }
-}
-
-// LOGIN
-async function login() {
+async function handleLogin() {
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
+  const errorEl = document.getElementById('loginError');
+  const successEl = document.getElementById('loginSuccess');
+  
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
   
   if (!email || !password) {
-    showError('Email dan password harus diisi');
+    errorEl.textContent = '❌ Email dan password harus diisi';
+    errorEl.style.display = 'block';
     return;
   }
-  
-  const btn = document.getElementById('loginBtn');
-  const btnText = document.getElementById('loginBtnText');
-  const spinner = document.getElementById('loginSpinner');
-  
-  btn.disabled = true;
-  btnText.style.display = 'none';
-  spinner.style.display = 'inline-block';
   
   try {
     const res = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
     
     const data = await res.json();
     
     if (!data.ok) {
-      showError(data.error || 'Login gagal');
+      errorEl.textContent = `❌ ${data.error}`;
+      errorEl.style.display = 'block';
       return;
     }
     
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     
-    showSuccess('Login berhasil! Redirect...');
+    successEl.textContent = '✅ Login berhasil! Redirecting...';
+    successEl.style.display = 'block';
+    
     setTimeout(() => {
       window.location.href = 'index.html';
-    }, 1500);
-    
+    }, 1000);
   } catch (error) {
-    showError('Network error: ' + error.message);
-  } finally {
-    btn.disabled = false;
-    btnText.style.display = 'inline';
-    spinner.style.display = 'none';
+    errorEl.textContent = `❌ Network error: ${error.message}`;
+    errorEl.style.display = 'block';
   }
 }
 
-// Auto-redirect if logged in
-if (localStorage.getItem('token')) {
-  window.location.href = 'index.html';
+async function handleRegister() {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+  const errorEl = document.getElementById('regError');
+  const successEl = document.getElementById('regSuccess');
+  
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+  
+  if (!name || !email || !password) {
+    errorEl.textContent = '❌ Semua field harus diisi';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  if (password.length < 6) {
+    errorEl.textContent = '❌ Password minimal 6 karakter';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+    });
+    
+    const data = await res.json();
+    
+    if (!data.ok) {
+      errorEl.textContent = `❌ ${data.error}`;
+      errorEl.style.display = 'block';
+      return;
+    }
+    
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    
+    successEl.textContent = '✅ Registrasi berhasil! Redirecting...';
+    successEl.style.display = 'block';
+    
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1000);
+  } catch (error) {
+    errorEl.textContent = `❌ Network error: ${error.message}`;
+    errorEl.style.display = 'block';
+  }
 }
 </script>
 
