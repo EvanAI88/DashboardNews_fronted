@@ -6,7 +6,7 @@
   <title>NewsPulse</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #ffffff; --bg2: #f9fafb; --text: #111827; --text-sec: #6b7280; --border: rgba(0,0,0,0.08); --primary: #3b82f6; }
+    :root { --bg: #ffffff; --bg2: #f9fafb; --text: #111827; --text-sec: #6b7280; --border: rgba(0,0,0,0.08); --primary: #3b82f6; --success: #10b981; }
     @media (prefers-color-scheme: dark) { :root { --bg: #0f172a; --bg2: #1e293b; --text: #f1f5f9; --text-sec: #cbd5e1; --border: rgba(255,255,255,0.1); } }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg2); color: var(--text); }
     .header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
@@ -17,6 +17,7 @@
     .user-status { font-size: 11px; color: var(--text-sec); }
     button { font-family: inherit; border: none; cursor: pointer; border-radius: 6px; font-size: 13px; padding: 8px 12px; transition: all 0.15s; }
     .btn-admin { background: var(--primary); color: white; }
+    .btn-upgrade { background: var(--success); color: white; }
     .btn-logout { background: #ef4444; color: white; }
     .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
     .title { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
@@ -42,10 +43,26 @@
     .admin-badge { background: #dbeafe; color: #0c4a6e; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .trial-badge { background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .empty { text-align: center; padding: 60px 20px; color: var(--text-sec); }
+    
+    /* PAYMENT MODAL */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: var(--bg); border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+    .plan-group { margin-bottom: 20px; }
+    .plan-label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 14px; }
+    .plan-option { margin-bottom: 12px; display: flex; align-items: center; }
+    .plan-option input { margin-right: 10px; }
+    .plan-option label { margin: 0; cursor: pointer; flex: 1; }
+    .price-box { background: var(--bg2); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; }
+    .modal-buttons { display: flex; gap: 10px; }
+    .btn-cancel { flex: 1; background: #ccc; color: #000; }
+    .btn-pay { flex: 1; background: var(--primary); color: white; }
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <div class="logo">🎛️ NewsPulse</div>
   <div class="header-right">
@@ -53,11 +70,13 @@
       <div class="user-name" id="userName">User</div>
       <div class="user-status" id="userStatus">Loading...</div>
     </div>
+    <button class="btn-upgrade" id="upgradeBtn" onclick="showPaymentModal()" style="display:none;">💳 Upgrade</button>
     <button class="btn-admin" id="adminBtn" style="display:none;" onclick="goAdmin()">👨‍💼 Admin</button>
     <button class="btn-logout" onclick="logout()">Logout</button>
   </div>
 </div>
 
+<!-- MAIN -->
 <div class="container">
   <div class="title">📰 Financial & Tech News</div>
   <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
@@ -75,6 +94,39 @@
   <div class="stats" id="stats">Total: 0 | Ditampilkan: 0</div>
   <div class="news-list" id="newsList"></div>
 </div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-box">
+    <div class="modal-title">💳 Upgrade to Premium</div>
+    
+    <div class="plan-group">
+      <label class="plan-label">Pilih Paket:</label>
+      
+      <div class="plan-option">
+        <input type="radio" name="plan" value="monthly" id="planMonthly" checked onchange="updatePrice()">
+        <label for="planMonthly">📅 Monthly - Rp 49,000 / bulan</label>
+      </div>
+      
+      <div class="plan-option">
+        <input type="radio" name="plan" value="yearly" id="planYearly" onchange="updatePrice()">
+        <label for="planYearly">🎯 Yearly - Rp 399,000 / tahun (HEMAT!)</label>
+      </div>
+    </div>
+    
+    <div class="price-box">
+      Total: Rp <span id="totalPrice">49,000</span>
+    </div>
+    
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="closePaymentModal()">Batal</button>
+      <button class="btn-pay" onclick="proceedPayment()">Bayar Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- MIDTRANS SNAP SCRIPT -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js"></script>
 
 <script>
 const API_URL = 'https://dashboardnews-backend.onrender.com';
@@ -96,6 +148,7 @@ async function init() {
     document.getElementById('adminBtn').style.display = 'block';
     document.getElementById('userStatus').innerHTML = '<span class="admin-badge">✅ Admin — Full Access</span>';
   } else {
+    document.getElementById('upgradeBtn').style.display = 'block';
     const daysLeft = user.trial_days_remaining || 5;
     document.getElementById('userStatus').innerHTML = `<span class="trial-badge">📅 Free Trial — ${daysLeft} hari tersisa</span>`;
   }
@@ -176,6 +229,61 @@ function renderNews(news) {
 
 function refreshNews() {
   loadNews();
+}
+
+function showPaymentModal() {
+  document.getElementById('paymentModal').classList.add('active');
+}
+
+function closePaymentModal() {
+  document.getElementById('paymentModal').classList.remove('active');
+}
+
+function updatePrice() {
+  const plan = document.querySelector('input[name="plan"]:checked').value;
+  const price = plan === 'monthly' ? 49000 : 399000;
+  document.getElementById('totalPrice').textContent = price.toLocaleString('id-ID');
+}
+
+async function proceedPayment() {
+  const token = localStorage.getItem('token');
+  const plan = document.querySelector('input[name="plan"]:checked').value;
+  
+  try {
+    const res = await fetch(`${API_URL}/api/payment/subscribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ plan }),
+    });
+    
+    const data = await res.json();
+    if (!data.ok) {
+      alert('❌ Error: ' + data.error);
+      return;
+    }
+    
+    snap.pay(data.snapToken, {
+      onSuccess: function(result) {
+        alert('✅ Payment Success! Terima kasih!');
+        closePaymentModal();
+        setTimeout(() => location.reload(), 2000);
+      },
+      onPending: function(result) {
+        alert('⏳ Payment pending...');
+      },
+      onError: function(result) {
+        alert('❌ Payment failed');
+      },
+      onClose: function() {
+        console.log('Payment modal closed');
+      },
+    });
+  } catch (error) {
+    alert('❌ Error: ' + error.message);
+  }
 }
 
 function goAdmin() {
