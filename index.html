@@ -25,6 +25,7 @@
     .controls { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
     .category-btn { padding: 8px 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; }
     .category-btn.active { background: var(--primary); color: white; }
+    .category-btn.locked { opacity: 0.5; cursor: not-allowed; }
     .search-box { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-family: inherit; }
     .search-box:focus { outline: none; border-color: var(--primary); }
     .btn-refresh { background: var(--primary); color: white; }
@@ -45,6 +46,48 @@
     .expired-badge { background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .premium-badge { background: #d1fae5; color: #065f46; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .empty { text-align: center; padding: 60px 20px; color: var(--text-sec); }
+
+    /* EXPIRED WALL */
+    .expired-wall {
+      background: var(--bg);
+      border: 2px dashed #ef4444;
+      border-radius: 12px;
+      padding: 60px 30px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .expired-wall .lock-icon { font-size: 56px; margin-bottom: 16px; }
+    .expired-wall h2 { font-size: 22px; font-weight: 700; color: #ef4444; margin-bottom: 10px; }
+    .expired-wall p { color: var(--text-sec); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+    .expired-wall .btn-upgrade-big {
+      background: var(--success);
+      color: white;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      margin-right: 10px;
+    }
+    .expired-wall .plan-info {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .expired-wall .plan-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 24px;
+      font-size: 13px;
+      min-width: 160px;
+    }
+    .expired-wall .plan-card strong { display: block; font-size: 16px; margin-bottom: 4px; }
+
+    /* PAYMENT MODAL */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.active { display: flex; }
     .modal-box { background: var(--bg); border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -79,7 +122,7 @@
   <div class="title">📰 Financial & Tech News</div>
   <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
   
-  <div class="controls">
+  <div class="controls" id="controls">
     <button class="category-btn active" data-cat="all" onclick="filterCategory('all')">📊 Semua</button>
     <button class="category-btn" data-cat="finance" onclick="filterCategory('finance')">💰 Finance</button>
     <button class="category-btn" data-cat="crypto" onclick="filterCategory('crypto')">₿ Crypto</button>
@@ -89,10 +132,11 @@
     <button class="btn-refresh" onclick="refreshNews()">🔄 Refresh</button>
   </div>
   
-  <div class="stats" id="stats">Total: 0 | Ditampilkan: 0</div>
-  <div class="news-list" id="newsList"></div>
+  <div class="stats" id="stats" style="display:none;">Total: 0 | Ditampilkan: 0</div>
+  <div id="contentArea"></div>
 </div>
 
+<!-- PAYMENT MODAL -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-box">
     <div class="modal-title">💳 Upgrade to Premium</div>
@@ -121,15 +165,12 @@
 const API_URL = 'https://dashboardnews-backend.onrender.com';
 let allNews = [];
 let currentCategory = 'all';
+let isExpired = false;
 
 async function init() {
   const token = localStorage.getItem('token');
-  if (!token) {
-    window.location.href = 'login.html';
-    return;
-  }
+  if (!token) { window.location.href = 'login.html'; return; }
 
-  // ✅ FIX: Selalu ambil data fresh dari /api/auth/me, BUKAN dari localStorage
   try {
     const res = await fetch(`${API_URL}/api/auth/me`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -137,7 +178,6 @@ async function init() {
     const data = await res.json();
 
     if (!data.ok) {
-      // Token expired atau invalid → redirect ke login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = 'login.html';
@@ -145,81 +185,139 @@ async function init() {
     }
 
     const user = data.user;
-
-    // Update localStorage dengan data terbaru
     localStorage.setItem('user', JSON.stringify(user));
-
     document.getElementById('userName').textContent = user.name || 'User';
 
     if (user.isAdmin) {
+      // ADMIN: full access
+      isExpired = false;
       document.getElementById('adminBtn').style.display = 'block';
       document.getElementById('upgradeBtn').style.display = 'none';
       document.getElementById('userStatus').innerHTML =
         '<span class="admin-badge">✅ Admin — Full Access</span>';
+      showNewsControls();
+      await loadNews();
+
     } else if (user.subscription_status === 'active') {
+      // PREMIUM: full access
+      isExpired = false;
       document.getElementById('upgradeBtn').style.display = 'none';
       document.getElementById('userStatus').innerHTML =
         '<span class="premium-badge">⭐ Premium Member</span>';
+      showNewsControls();
+      await loadNews();
+
     } else if (user.subscription_status === 'trial' && user.trial_days_remaining > 0) {
+      // TRIAL AKTIF: bisa akses news
+      isExpired = false;
       document.getElementById('upgradeBtn').style.display = 'block';
       document.getElementById('userStatus').innerHTML =
         `<span class="trial-badge">📅 Free Trial — ${user.trial_days_remaining} hari tersisa</span>`;
+      showNewsControls();
+      await loadNews();
+
     } else {
-      // Expired
+      // EXPIRED: blokir akses
+      isExpired = true;
       document.getElementById('upgradeBtn').style.display = 'block';
       document.getElementById('userStatus').innerHTML =
         '<span class="expired-badge">⛔ Trial Habis — Upgrade sekarang!</span>';
+      showExpiredWall();
     }
 
   } catch (err) {
     console.error('Auth check failed:', err);
     window.location.href = 'login.html';
-    return;
   }
-
-  await loadNews();
 }
 
-async function loadNews() {
-  try {
-    document.getElementById('newsList').innerHTML =
-      '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
-    
-    const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/api/news`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    const data = await res.json();
-    if (!data.ok) {
-      document.getElementById('newsList').innerHTML = '<div class="empty">❌ Failed to load news</div>';
-      return;
-    }
-    
-    const seen = new Set();
-    allNews = (data.news || []).filter(item => {
-      if (seen.has(item.title)) return false;
-      seen.add(item.title);
-      return true;
-    });
-    
-    filterNews();
-  } catch (error) {
-    document.getElementById('newsList').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
-  }
+function showNewsControls() {
+  document.getElementById('controls').style.display = 'flex';
+  document.getElementById('stats').style.display = 'block';
+  // Unlock semua category btn
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.classList.remove('locked');
+  });
+}
+
+function showExpiredWall() {
+  // Sembunyikan controls & stats
+  document.getElementById('controls').style.display = 'none';
+  document.getElementById('stats').style.display = 'none';
+
+  document.getElementById('contentArea').innerHTML = `
+    <div class="expired-wall">
+      <div class="lock-icon">🔒</div>
+      <h2>Akses Trial Habis</h2>
+      <p>
+        Masa trial gratis 5 hari kamu telah berakhir.<br>
+        Upgrade sekarang untuk tetap mengakses berita Finance, Crypto, AI, dan Tech secara real-time.
+      </p>
+      <button class="btn-upgrade-big" onclick="showPaymentModal()">
+        💳 Upgrade Sekarang
+      </button>
+      <div class="plan-info">
+        <div class="plan-card">
+          <strong>Rp 49.000</strong>
+          📅 Per Bulan
+        </div>
+        <div class="plan-card">
+          <strong>Rp 399.000</strong>
+          🎯 Per Tahun <span style="color:#10b981;font-weight:600;">(HEMAT!)</span>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function filterCategory(cat) {
+  if (isExpired) {
+    showPaymentModal();
+    return;
+  }
   currentCategory = cat;
   document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
   filterNews();
 }
 
+async function loadNews() {
+  if (isExpired) { showExpiredWall(); return; }
+
+  try {
+    document.getElementById('contentArea').innerHTML =
+      '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
+
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/api/news`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    if (!data.ok) {
+      document.getElementById('contentArea').innerHTML = '<div class="empty">❌ Failed to load news</div>';
+      return;
+    }
+
+    const seen = new Set();
+    allNews = (data.news || []).filter(item => {
+      if (seen.has(item.title)) return false;
+      seen.add(item.title);
+      return true;
+    });
+
+    filterNews();
+  } catch (error) {
+    document.getElementById('contentArea').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
+  }
+}
+
 function filterNews() {
+  if (isExpired) { showExpiredWall(); return; }
+
   const search = document.getElementById('searchBox').value.toLowerCase();
   let filtered = allNews;
-  
+
   if (currentCategory !== 'all') {
     filtered = filtered.filter(n => n.category === currentCategory);
   }
@@ -229,19 +327,19 @@ function filterNews() {
       (n.description || '').toLowerCase().includes(search)
     );
   }
-  
+
   renderNews(filtered);
   document.getElementById('stats').textContent =
     `Total: ${allNews.length} | Ditampilkan: ${filtered.length}`;
 }
 
 function renderNews(news) {
-  const container = document.getElementById('newsList');
+  const container = document.getElementById('contentArea');
   if (news.length === 0) {
     container.innerHTML = '<div class="empty">📭 No news found</div>';
     return;
   }
-  container.innerHTML = news.map(item => `
+  container.innerHTML = `<div class="news-list">${news.map(item => `
     <div class="news-item">
       <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
       <div class="news-title">${item.title}</div>
@@ -251,10 +349,13 @@ function renderNews(news) {
         <a href="${item.link}" target="_blank" class="news-link">Read more →</a>
       </div>
     </div>
-  `).join('');
+  `).join('')}</div>`;
 }
 
-function refreshNews() { loadNews(); }
+function refreshNews() {
+  if (isExpired) { showExpiredWall(); return; }
+  loadNews();
+}
 
 function showPaymentModal() {
   document.getElementById('paymentModal').classList.add('active');
@@ -266,8 +367,7 @@ function closePaymentModal() {
 
 function updatePrice() {
   const plan = document.querySelector('input[name="plan"]:checked').value;
-  const price = plan === 'monthly' ? '49.000' : '399.000';
-  document.getElementById('totalPrice').textContent = price;
+  document.getElementById('totalPrice').textContent = plan === 'monthly' ? '49.000' : '399.000';
 }
 
 async function proceedPayment() {
@@ -284,7 +384,7 @@ async function proceedPayment() {
     });
     const data = await res.json();
     if (!data.ok) { alert('❌ Error: ' + data.error); return; }
-    
+
     snap.pay(data.snapToken, {
       onSuccess: function() {
         alert('✅ Payment Success! Terima kasih!');
