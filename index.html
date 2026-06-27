@@ -42,9 +42,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .admin-badge { background: #dbeafe; color: #0c4a6e; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .trial-badge { background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+    .expired-badge { background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+    .premium-badge { background: #d1fae5; color: #065f46; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .empty { text-align: center; padding: 60px 20px; color: var(--text-sec); }
-    
-    /* PAYMENT MODAL */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.active { display: flex; }
     .modal-box { background: var(--bg); border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -62,7 +62,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="logo">🎛️ NewsPulse</div>
   <div class="header-right">
@@ -76,7 +75,6 @@
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="container">
   <div class="title">📰 Financial & Tech News</div>
   <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
@@ -95,29 +93,21 @@
   <div class="news-list" id="newsList"></div>
 </div>
 
-<!-- PAYMENT MODAL -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-box">
     <div class="modal-title">💳 Upgrade to Premium</div>
-    
     <div class="plan-group">
       <label class="plan-label">Pilih Paket:</label>
-      
       <div class="plan-option">
         <input type="radio" name="plan" value="monthly" id="planMonthly" checked onchange="updatePrice()">
-        <label for="planMonthly">📅 Monthly - Rp 49,000 / bulan</label>
+        <label for="planMonthly">📅 Monthly — Rp 49.000 / bulan</label>
       </div>
-      
       <div class="plan-option">
         <input type="radio" name="plan" value="yearly" id="planYearly" onchange="updatePrice()">
-        <label for="planYearly">🎯 Yearly - Rp 399,000 / tahun (HEMAT!)</label>
+        <label for="planYearly">🎯 Yearly — Rp 399.000 / tahun (HEMAT!)</label>
       </div>
     </div>
-    
-    <div class="price-box">
-      Total: Rp <span id="totalPrice">49,000</span>
-    </div>
-    
+    <div class="price-box">Total: Rp <span id="totalPrice">49.000</span></div>
     <div class="modal-buttons">
       <button class="btn-cancel" onclick="closePaymentModal()">Batal</button>
       <button class="btn-pay" onclick="proceedPayment()">Bayar Sekarang</button>
@@ -125,7 +115,6 @@
   </div>
 </div>
 
-<!-- MIDTRANS SNAP SCRIPT -->
 <script src="https://app.sandbox.midtrans.com/snap/snap.js"></script>
 
 <script>
@@ -135,30 +124,66 @@ let currentCategory = 'all';
 
 async function init() {
   const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  
   if (!token) {
     window.location.href = 'login.html';
     return;
   }
-  
-  document.getElementById('userName').textContent = user.name || 'User';
-  
-  if (user.email === 'admin@newspulse.com') {
-    document.getElementById('adminBtn').style.display = 'block';
-    document.getElementById('userStatus').innerHTML = '<span class="admin-badge">✅ Admin — Full Access</span>';
-  } else {
-    document.getElementById('upgradeBtn').style.display = 'block';
-    const daysLeft = user.trial_days_remaining || 5;
-    document.getElementById('userStatus').innerHTML = `<span class="trial-badge">📅 Free Trial — ${daysLeft} hari tersisa</span>`;
+
+  // ✅ FIX: Selalu ambil data fresh dari /api/auth/me, BUKAN dari localStorage
+  try {
+    const res = await fetch(`${API_URL}/api/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    if (!data.ok) {
+      // Token expired atau invalid → redirect ke login
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const user = data.user;
+
+    // Update localStorage dengan data terbaru
+    localStorage.setItem('user', JSON.stringify(user));
+
+    document.getElementById('userName').textContent = user.name || 'User';
+
+    if (user.isAdmin) {
+      document.getElementById('adminBtn').style.display = 'block';
+      document.getElementById('upgradeBtn').style.display = 'none';
+      document.getElementById('userStatus').innerHTML =
+        '<span class="admin-badge">✅ Admin — Full Access</span>';
+    } else if (user.subscription_status === 'active') {
+      document.getElementById('upgradeBtn').style.display = 'none';
+      document.getElementById('userStatus').innerHTML =
+        '<span class="premium-badge">⭐ Premium Member</span>';
+    } else if (user.subscription_status === 'trial' && user.trial_days_remaining > 0) {
+      document.getElementById('upgradeBtn').style.display = 'block';
+      document.getElementById('userStatus').innerHTML =
+        `<span class="trial-badge">📅 Free Trial — ${user.trial_days_remaining} hari tersisa</span>`;
+    } else {
+      // Expired
+      document.getElementById('upgradeBtn').style.display = 'block';
+      document.getElementById('userStatus').innerHTML =
+        '<span class="expired-badge">⛔ Trial Habis — Upgrade sekarang!</span>';
+    }
+
+  } catch (err) {
+    console.error('Auth check failed:', err);
+    window.location.href = 'login.html';
+    return;
   }
-  
+
   await loadNews();
 }
 
 async function loadNews() {
   try {
-    document.getElementById('newsList').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
+    document.getElementById('newsList').innerHTML =
+      '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
     
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/api/news`, {
@@ -198,13 +223,16 @@ function filterNews() {
   if (currentCategory !== 'all') {
     filtered = filtered.filter(n => n.category === currentCategory);
   }
-  
   if (search) {
-    filtered = filtered.filter(n => n.title.toLowerCase().includes(search));
+    filtered = filtered.filter(n =>
+      n.title.toLowerCase().includes(search) ||
+      (n.description || '').toLowerCase().includes(search)
+    );
   }
   
   renderNews(filtered);
-  document.getElementById('stats').textContent = `Total: ${allNews.length} | Ditampilkan: ${filtered.length}`;
+  document.getElementById('stats').textContent =
+    `Total: ${allNews.length} | Ditampilkan: ${filtered.length}`;
 }
 
 function renderNews(news) {
@@ -213,12 +241,11 @@ function renderNews(news) {
     container.innerHTML = '<div class="empty">📭 No news found</div>';
     return;
   }
-  
   container.innerHTML = news.map(item => `
     <div class="news-item">
       <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
       <div class="news-title">${item.title}</div>
-      <div class="news-desc">${item.description}</div>
+      <div class="news-desc">${item.description || ''}</div>
       <div class="news-footer">
         <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
         <a href="${item.link}" target="_blank" class="news-link">Read more →</a>
@@ -227,9 +254,7 @@ function renderNews(news) {
   `).join('');
 }
 
-function refreshNews() {
-  loadNews();
-}
+function refreshNews() { loadNews(); }
 
 function showPaymentModal() {
   document.getElementById('paymentModal').classList.add('active');
@@ -241,14 +266,13 @@ function closePaymentModal() {
 
 function updatePrice() {
   const plan = document.querySelector('input[name="plan"]:checked').value;
-  const price = plan === 'monthly' ? 49000 : 399000;
-  document.getElementById('totalPrice').textContent = price.toLocaleString('id-ID');
+  const price = plan === 'monthly' ? '49.000' : '399.000';
+  document.getElementById('totalPrice').textContent = price;
 }
 
 async function proceedPayment() {
   const token = localStorage.getItem('token');
   const plan = document.querySelector('input[name="plan"]:checked').value;
-  
   try {
     const res = await fetch(`${API_URL}/api/payment/subscribe`, {
       method: 'POST',
@@ -258,37 +282,25 @@ async function proceedPayment() {
       },
       body: JSON.stringify({ plan }),
     });
-    
     const data = await res.json();
-    if (!data.ok) {
-      alert('❌ Error: ' + data.error);
-      return;
-    }
+    if (!data.ok) { alert('❌ Error: ' + data.error); return; }
     
     snap.pay(data.snapToken, {
-      onSuccess: function(result) {
+      onSuccess: function() {
         alert('✅ Payment Success! Terima kasih!');
         closePaymentModal();
-        setTimeout(() => location.reload(), 2000);
+        setTimeout(() => location.reload(), 1000);
       },
-      onPending: function(result) {
-        alert('⏳ Payment pending...');
-      },
-      onError: function(result) {
-        alert('❌ Payment failed');
-      },
-      onClose: function() {
-        console.log('Payment modal closed');
-      },
+      onPending: function() { alert('⏳ Payment pending. Cek email untuk instruksi.'); },
+      onError: function() { alert('❌ Payment failed. Coba lagi.'); },
+      onClose: function() { console.log('Payment modal closed'); },
     });
   } catch (error) {
     alert('❌ Error: ' + error.message);
   }
 }
 
-function goAdmin() {
-  window.location.href = 'admin.html';
-}
+function goAdmin() { window.location.href = 'admin.html'; }
 
 function logout() {
   localStorage.removeItem('token');
@@ -298,6 +310,5 @@ function logout() {
 
 init();
 </script>
-
 </body>
 </html>
