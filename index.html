@@ -1,3 +1,5 @@
+bash
+cat > /mnt/user-data/outputs/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -14,93 +16,81 @@
     .header-right { display: flex; gap: 12px; align-items: center; }
     .user-info { font-size: 13px; text-align: right; }
     .user-name { font-weight: 600; }
-    .user-status { font-size: 11px; color: var(--text-sec); }
     button { font-family: inherit; border: none; cursor: pointer; border-radius: 6px; font-size: 13px; padding: 8px 12px; transition: all 0.15s; }
     .btn-admin { background: var(--primary); color: white; }
     .btn-upgrade { background: var(--success); color: white; }
     .btn-logout { background: #ef4444; color: white; }
     .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
-    .title { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
-    .subtitle { color: var(--text-sec); margin-bottom: 24px; }
-    .controls { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: var(--text-sec); margin-bottom: 24px; font-size: 14px; }
+    .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
     .category-btn { padding: 8px 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; }
-    .category-btn.active { background: var(--primary); color: white; }
-    .category-btn.locked { opacity: 0.5; cursor: not-allowed; }
-    .search-box { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-family: inherit; }
+    .category-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .search-box { flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 13px; }
     .search-box:focus { outline: none; border-color: var(--primary); }
     .btn-refresh { background: var(--primary); color: white; }
-    .stats { background: var(--bg); padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; color: var(--text-sec); border: 1px solid var(--border); }
+    .stats { background: var(--bg); padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 12px; color: var(--text-sec); border: 1px solid var(--border); }
     .news-list { display: grid; gap: 16px; }
-    .news-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
-    .news-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary); }
-    .news-badge { display: inline-block; padding: 4px 8px; background: var(--primary); color: white; border-radius: 4px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
-    .news-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
-    .news-desc { font-size: 13px; color: var(--text-sec); line-height: 1.5; margin-bottom: 12px; }
-    .news-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-sec); }
+
+    /* NEWS CARD */
+    .news-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: box-shadow 0.15s; }
+    .news-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .news-header { padding: 16px 20px 0; }
+    .news-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--primary); color: white; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 12px; }
+    
+    /* ENGLISH SECTION */
+    .lang-section { padding: 0 20px 14px; }
+    .lang-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .lang-flag { font-size: 14px; }
+    .news-title-en { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text); margin-bottom: 6px; }
+    .news-desc-en { font-size: 13px; color: var(--text-sec); line-height: 1.55; }
+
+    /* DIVIDER */
+    .lang-divider { height: 1px; background: var(--border); margin: 0 20px; }
+
+    /* INDONESIA SECTION */
+    .lang-section-id { padding: 14px 20px; background: rgba(59,130,246,0.03); border-top: none; }
+    .news-title-id { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text); margin-bottom: 6px; }
+    .news-desc-id { font-size: 13px; color: var(--text-sec); line-height: 1.6; font-style: italic; }
+
+    /* FOOTER */
+    .news-footer { padding: 10px 20px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-sec); border-top: 1px solid var(--border); }
     .news-link { color: var(--primary); text-decoration: none; font-weight: 500; }
-    .loading { text-align: center; padding: 40px 20px; color: var(--text-sec); }
-    .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .news-link:hover { text-decoration: underline; }
+
+    .loading { text-align: center; padding: 60px 20px; color: var(--text-sec); }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
+    .loading p { font-size: 14px; }
+    .loading small { font-size: 12px; color: var(--text-sec); margin-top: 6px; display: block; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .admin-badge { background: #dbeafe; color: #0c4a6e; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-    .trial-badge { background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-    .expired-badge { background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-    .premium-badge { background: #d1fae5; color: #065f46; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-    .empty { text-align: center; padding: 60px 20px; color: var(--text-sec); }
+
+    .admin-badge { background: #dbeafe; color: #1e40af; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .trial-badge { background: #fef3c7; color: #92400e; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .expired-badge { background: #fee2e2; color: #991b1b; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .premium-badge { background: #d1fae5; color: #065f46; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .empty { text-align: center; padding: 60px 20px; color: var(--text-sec); font-size: 14px; }
 
     /* EXPIRED WALL */
-    .expired-wall {
-      background: var(--bg);
-      border: 2px dashed #ef4444;
-      border-radius: 12px;
-      padding: 60px 30px;
-      text-align: center;
-      margin-top: 20px;
-    }
+    .expired-wall { background: var(--bg); border: 2px dashed #ef4444; border-radius: 12px; padding: 60px 30px; text-align: center; }
     .expired-wall .lock-icon { font-size: 56px; margin-bottom: 16px; }
     .expired-wall h2 { font-size: 22px; font-weight: 700; color: #ef4444; margin-bottom: 10px; }
     .expired-wall p { color: var(--text-sec); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
-    .expired-wall .btn-upgrade-big {
-      background: var(--success);
-      color: white;
-      padding: 14px 32px;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      margin-right: 10px;
-    }
-    .expired-wall .plan-info {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .expired-wall .plan-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px 24px;
-      font-size: 13px;
-      min-width: 160px;
-    }
-    .expired-wall .plan-card strong { display: block; font-size: 16px; margin-bottom: 4px; }
+    .btn-upgrade-big { background: var(--success); color: white; padding: 14px 32px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; }
+    .plan-info { margin-top: 24px; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .plan-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 24px; font-size: 13px; min-width: 150px; }
+    .plan-card strong { display: block; font-size: 17px; margin-bottom: 4px; }
 
-    /* PAYMENT MODAL */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.active { display: flex; }
     .modal-box { background: var(--bg); border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
     .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
-    .plan-group { margin-bottom: 20px; }
-    .plan-label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 14px; }
-    .plan-option { margin-bottom: 12px; display: flex; align-items: center; }
-    .plan-option input { margin-right: 10px; }
-    .plan-option label { margin: 0; cursor: pointer; flex: 1; }
-    .price-box { background: var(--bg2); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; }
+    .plan-option { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .plan-option label { cursor: pointer; font-size: 14px; }
+    .price-box { background: var(--bg2); padding: 12px; border-radius: 6px; margin: 16px 0; font-weight: 600; }
     .modal-buttons { display: flex; gap: 10px; }
-    .btn-cancel { flex: 1; background: #ccc; color: #000; }
-    .btn-pay { flex: 1; background: var(--primary); color: white; }
+    .btn-cancel { flex: 1; background: #e5e7eb; color: #374151; }
+    .btn-pay { flex: 1; background: var(--primary); color: white; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -109,8 +99,8 @@
   <div class="logo">🎛️ NewsPulse</div>
   <div class="header-right">
     <div class="user-info">
-      <div class="user-name" id="userName">User</div>
-      <div class="user-status" id="userStatus">Loading...</div>
+      <div class="user-name" id="userName">...</div>
+      <div id="userStatus"></div>
     </div>
     <button class="btn-upgrade" id="upgradeBtn" onclick="showPaymentModal()" style="display:none;">💳 Upgrade</button>
     <button class="btn-admin" id="adminBtn" style="display:none;" onclick="goAdmin()">👨‍💼 Admin</button>
@@ -119,10 +109,10 @@
 </div>
 
 <div class="container">
-  <div class="title">📰 Financial & Tech News</div>
-  <div class="subtitle">Real-time news from Finance, Crypto, AI, and Tech</div>
-  
-  <div class="controls" id="controls">
+  <div class="page-title">📰 Financial & Tech News</div>
+  <div class="subtitle">Berita real-time dari Finance, Crypto, AI, dan Tech — dalam Bahasa Inggris & Indonesia</div>
+
+  <div class="controls" id="controls" style="display:none;">
     <button class="category-btn active" data-cat="all" onclick="filterCategory('all')">📊 Semua</button>
     <button class="category-btn" data-cat="finance" onclick="filterCategory('finance')">💰 Finance</button>
     <button class="category-btn" data-cat="crypto" onclick="filterCategory('crypto')">₿ Crypto</button>
@@ -131,25 +121,27 @@
     <input type="text" class="search-box" id="searchBox" placeholder="Cari berita..." onkeyup="filterNews()">
     <button class="btn-refresh" onclick="refreshNews()">🔄 Refresh</button>
   </div>
-  
-  <div class="stats" id="stats" style="display:none;">Total: 0 | Ditampilkan: 0</div>
-  <div id="contentArea"></div>
+
+  <div class="stats" id="stats" style="display:none;"></div>
+  <div id="contentArea">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Memuat berita...</p>
+    </div>
+  </div>
 </div>
 
 <!-- PAYMENT MODAL -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-box">
     <div class="modal-title">💳 Upgrade to Premium</div>
-    <div class="plan-group">
-      <label class="plan-label">Pilih Paket:</label>
-      <div class="plan-option">
-        <input type="radio" name="plan" value="monthly" id="planMonthly" checked onchange="updatePrice()">
-        <label for="planMonthly">📅 Monthly — Rp 49.000 / bulan</label>
-      </div>
-      <div class="plan-option">
-        <input type="radio" name="plan" value="yearly" id="planYearly" onchange="updatePrice()">
-        <label for="planYearly">🎯 Yearly — Rp 399.000 / tahun (HEMAT!)</label>
-      </div>
+    <div class="plan-option">
+      <input type="radio" name="plan" value="monthly" id="planMonthly" checked onchange="updatePrice()">
+      <label for="planMonthly">📅 Monthly — <strong>Rp 49.000</strong> / bulan</label>
+    </div>
+    <div class="plan-option">
+      <input type="radio" name="plan" value="yearly" id="planYearly" onchange="updatePrice()">
+      <label for="planYearly">🎯 Yearly — <strong>Rp 399.000</strong> / tahun <span style="color:#10b981;">(HEMAT!)</span></label>
     </div>
     <div class="price-box">Total: Rp <span id="totalPrice">49.000</span></div>
     <div class="modal-buttons">
@@ -179,8 +171,7 @@ async function init() {
     const data = await res.json();
 
     if (!data.ok) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.clear();
       window.location.href = 'login.html';
       return;
     }
@@ -190,115 +181,80 @@ async function init() {
     document.getElementById('userName').textContent = user.name || 'User';
 
     if (user.isAdmin) {
-      // ADMIN: full access
       isExpired = false;
       document.getElementById('adminBtn').style.display = 'block';
-      document.getElementById('upgradeBtn').style.display = 'none';
-      document.getElementById('userStatus').innerHTML =
-        '<span class="admin-badge">✅ Admin — Full Access</span>';
-      showNewsControls();
+      document.getElementById('userStatus').innerHTML = '<span class="admin-badge">✅ Admin — Full Access</span>';
+      showControls();
       await loadNews();
 
     } else if (user.subscription_status === 'active') {
-      // PREMIUM: full access
       isExpired = false;
-      document.getElementById('upgradeBtn').style.display = 'none';
-      document.getElementById('userStatus').innerHTML =
-        '<span class="premium-badge">⭐ Premium Member</span>';
-      showNewsControls();
+      document.getElementById('userStatus').innerHTML = '<span class="premium-badge">⭐ Premium Member</span>';
+      showControls();
       await loadNews();
 
     } else if (user.subscription_status === 'trial' && user.trial_days_remaining > 0) {
-      // TRIAL AKTIF: bisa akses news
       isExpired = false;
       document.getElementById('upgradeBtn').style.display = 'block';
       document.getElementById('userStatus').innerHTML =
         `<span class="trial-badge">📅 Free Trial — ${user.trial_days_remaining} hari tersisa</span>`;
-      showNewsControls();
+      showControls();
       await loadNews();
 
     } else {
-      // EXPIRED: blokir akses
       isExpired = true;
       document.getElementById('upgradeBtn').style.display = 'block';
-      document.getElementById('userStatus').innerHTML =
-        '<span class="expired-badge">⛔ Trial Habis — Upgrade sekarang!</span>';
+      document.getElementById('userStatus').innerHTML = '<span class="expired-badge">⛔ Trial Habis</span>';
       showExpiredWall();
     }
 
   } catch (err) {
-    console.error('Auth check failed:', err);
+    localStorage.clear();
     window.location.href = 'login.html';
   }
 }
 
-function showNewsControls() {
+function showControls() {
   document.getElementById('controls').style.display = 'flex';
   document.getElementById('stats').style.display = 'block';
-  // Unlock semua category btn
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.classList.remove('locked');
-  });
 }
 
 function showExpiredWall() {
-  // Sembunyikan controls & stats
   document.getElementById('controls').style.display = 'none';
   document.getElementById('stats').style.display = 'none';
-
   document.getElementById('contentArea').innerHTML = `
     <div class="expired-wall">
       <div class="lock-icon">🔒</div>
       <h2>Akses Trial Habis</h2>
-      <p>
-        Masa trial gratis 5 hari kamu telah berakhir.<br>
-        Upgrade sekarang untuk tetap mengakses berita Finance, Crypto, AI, dan Tech secara real-time.
-      </p>
-      <button class="btn-upgrade-big" onclick="showPaymentModal()">
-        💳 Upgrade Sekarang
-      </button>
+      <p>Masa trial gratis 5 hari kamu telah berakhir.<br>
+      Upgrade sekarang untuk tetap mengakses berita Finance, Crypto, AI, dan Tech secara real-time.</p>
+      <button class="btn-upgrade-big" onclick="showPaymentModal()">💳 Upgrade Sekarang</button>
       <div class="plan-info">
-        <div class="plan-card">
-          <strong>Rp 49.000</strong>
-          📅 Per Bulan
-        </div>
-        <div class="plan-card">
-          <strong>Rp 399.000</strong>
-          🎯 Per Tahun <span style="color:#10b981;font-weight:600;">(HEMAT!)</span>
-        </div>
+        <div class="plan-card"><strong>Rp 49.000</strong>📅 Per Bulan</div>
+        <div class="plan-card"><strong>Rp 399.000</strong>🎯 Per Tahun <span style="color:#10b981;font-weight:600;">(HEMAT!)</span></div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function filterCategory(cat) {
-  if (isExpired) {
-    showPaymentModal();
-    return;
-  }
+  if (isExpired) { showPaymentModal(); return; }
   currentCategory = cat;
-  document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
   filterNews();
 }
 
 async function loadNews() {
   if (isExpired) { showExpiredWall(); return; }
+  document.getElementById('contentArea').innerHTML =
+    '<div class="loading"><div class="spinner"></div><p>Memuat & menerjemahkan berita...</p><small>Proses pertama membutuhkan sekitar 1-2 menit untuk terjemahan.</small></div>';
 
   try {
-    document.getElementById('contentArea').innerHTML =
-      '<div class="loading"><div class="spinner"></div><p>Loading news...</p></div>';
-
     const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/api/news`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    const res = await fetch(`${API_URL}/api/news`, { headers: { 'Authorization': `Bearer ${token}` } });
     const data = await res.json();
 
-    if (!data.ok) {
-      document.getElementById('contentArea').innerHTML = '<div class="empty">❌ Failed to load news</div>';
-      return;
-    }
+    if (!data.ok) { document.getElementById('contentArea').innerHTML = '<div class="empty">❌ Gagal memuat berita</div>'; return; }
 
     const seen = new Set();
     allNews = (data.news || []).filter(item => {
@@ -308,64 +264,70 @@ async function loadNews() {
     });
 
     filterNews();
-  } catch (error) {
-    document.getElementById('contentArea').innerHTML = `<div class="empty">❌ ${error.message}</div>`;
+  } catch (err) {
+    document.getElementById('contentArea').innerHTML = `<div class="empty">❌ ${err.message}</div>`;
   }
 }
 
 function filterNews() {
   if (isExpired) { showExpiredWall(); return; }
-
   const search = document.getElementById('searchBox').value.toLowerCase();
   let filtered = allNews;
-
-  if (currentCategory !== 'all') {
-    filtered = filtered.filter(n => n.category === currentCategory);
-  }
-  if (search) {
-    filtered = filtered.filter(n =>
-      n.title.toLowerCase().includes(search) ||
-      (n.description || '').toLowerCase().includes(search)
-    );
-  }
-
+  if (currentCategory !== 'all') filtered = filtered.filter(n => n.category === currentCategory);
+  if (search) filtered = filtered.filter(n =>
+    n.title.toLowerCase().includes(search) || (n.description || '').toLowerCase().includes(search)
+  );
   renderNews(filtered);
-  document.getElementById('stats').textContent =
-    `Total: ${allNews.length} | Ditampilkan: ${filtered.length}`;
+  document.getElementById('stats').textContent = `Total: ${allNews.length} berita | Ditampilkan: ${filtered.length}`;
 }
 
 function renderNews(news) {
-  const container = document.getElementById('contentArea');
   if (news.length === 0) {
-    container.innerHTML = '<div class="empty">📭 No news found</div>';
+    document.getElementById('contentArea').innerHTML = '<div class="empty">📭 Tidak ada berita ditemukan</div>';
     return;
   }
-  container.innerHTML = `<div class="news-list">${news.map(item => `
+
+  const categoryEmoji = { finance: '💰', crypto: '₿', ai: '🤖', tech: '💻' };
+
+  document.getElementById('contentArea').innerHTML = `<div class="news-list">${news.map(item => {
+    const hasTranslation = item.title_id && item.title_id !== item.title;
+    const emoji = categoryEmoji[item.category] || '📰';
+    const date = new Date(item.pubDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    return `
     <div class="news-item">
-      <div class="news-badge">${item.category.toUpperCase()} • ${item.source}</div>
-      <div class="news-title">${item.title}</div>
-      <div class="news-desc">${item.description || ''}</div>
-      <div class="news-footer">
-        <span>📅 ${new Date(item.pubDate).toLocaleDateString('id-ID')}</span>
-        <a href="${item.link}" target="_blank" class="news-link">Read more →</a>
+      <div class="news-header">
+        <div class="news-badge">${emoji} ${item.category.toUpperCase()} &nbsp;·&nbsp; ${item.source}</div>
       </div>
-    </div>
-  `).join('')}</div>`;
+
+      <!-- ENGLISH -->
+      <div class="lang-section">
+        <div class="lang-label"><span class="lang-flag">🇬🇧</span> English</div>
+        <div class="news-title-en">${item.title}</div>
+        ${item.description ? `<div class="news-desc-en">${item.description}</div>` : ''}
+      </div>
+
+      ${hasTranslation ? `
+      <div class="lang-divider"></div>
+      <!-- INDONESIA -->
+      <div class="lang-section-id">
+        <div class="lang-label"><span class="lang-flag">🇮🇩</span> Bahasa Indonesia</div>
+        <div class="news-title-id">${item.title_id}</div>
+        ${item.description_id ? `<div class="news-desc-id">${item.description_id}</div>` : ''}
+      </div>` : ''}
+
+      <div class="news-footer">
+        <span>📅 ${date}</span>
+        <a href="${item.link}" target="_blank" class="news-link">Baca selengkapnya →</a>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
 }
 
-function refreshNews() {
-  if (isExpired) { showExpiredWall(); return; }
-  loadNews();
-}
+function refreshNews() { if (!isExpired) loadNews(); }
 
-function showPaymentModal() {
-  document.getElementById('paymentModal').classList.add('active');
-}
-
-function closePaymentModal() {
-  document.getElementById('paymentModal').classList.remove('active');
-}
-
+function showPaymentModal() { document.getElementById('paymentModal').classList.add('active'); }
+function closePaymentModal() { document.getElementById('paymentModal').classList.remove('active'); }
 function updatePrice() {
   const plan = document.querySelector('input[name="plan"]:checked').value;
   document.getElementById('totalPrice').textContent = plan === 'monthly' ? '49.000' : '399.000';
@@ -377,39 +339,27 @@ async function proceedPayment() {
   try {
     const res = await fetch(`${API_URL}/api/payment/subscribe`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ plan }),
     });
     const data = await res.json();
-    if (!data.ok) { alert('❌ Error: ' + data.error); return; }
-
+    if (!data.ok) { alert('❌ ' + data.error); return; }
     snap.pay(data.snapToken, {
-      onSuccess: function() {
-        alert('✅ Payment Success! Terima kasih!');
-        closePaymentModal();
-        setTimeout(() => location.reload(), 1000);
-      },
-      onPending: function() { alert('⏳ Payment pending. Cek email untuk instruksi.'); },
-      onError: function() { alert('❌ Payment failed. Coba lagi.'); },
-      onClose: function() { console.log('Payment modal closed'); },
+      onSuccess: () => { alert('✅ Payment berhasil! Terima kasih.'); closePaymentModal(); setTimeout(() => location.reload(), 1000); },
+      onPending: () => alert('⏳ Payment pending. Cek email untuk instruksi.'),
+      onError: () => alert('❌ Payment gagal. Coba lagi.'),
+      onClose: () => {},
     });
-  } catch (error) {
-    alert('❌ Error: ' + error.message);
-  }
+  } catch (err) { alert('❌ ' + err.message); }
 }
 
 function goAdmin() { window.location.href = 'admin.html'; }
-
-function logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = 'login.html';
-}
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
 
 init();
 </script>
 </body>
 </html>
+EOF
+echo "index.html done"
+Output
